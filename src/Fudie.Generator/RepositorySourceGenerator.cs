@@ -149,7 +149,10 @@ public class RepositorySourceGenerator : IIncrementalGenerator
         Compilation compilation,
         SourceProductionContext context)
     {
-        var namespaceName = interfaceSymbol.ContainingNamespace!.ToDisplayString() ?? "Generated";
+        var ns = interfaceSymbol.ContainingNamespace;
+        var namespaceName = ns is null || ns.IsGlobalNamespace
+            ? "Generated"
+            : ns.ToDisplayString();
 
         var interfaceName = interfaceSymbol.Name;
         var baseClassName = interfaceName.StartsWith("I") && interfaceName.Length > 1
