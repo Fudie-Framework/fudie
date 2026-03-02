@@ -1,5 +1,4 @@
 global using System.Security.Cryptography;
-global using Fudie.Security;
 global using Fudie.Security.Jwt;
 global using Microsoft.Extensions.Caching.Memory;
 global using Microsoft.Extensions.Configuration;

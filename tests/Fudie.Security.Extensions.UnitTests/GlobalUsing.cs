@@ -1,6 +1,4 @@
 global using FluentAssertions;
-global using Fudie.Security;
-global using Fudie.Security.Extensions;
 global using Fudie.Security.Jwt;
 global using Microsoft.Extensions.Caching.Memory;
 global using Microsoft.Extensions.Configuration;

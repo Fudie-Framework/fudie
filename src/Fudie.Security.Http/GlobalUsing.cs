@@ -1,7 +1,6 @@
 global using System.Security.Claims;
 global using Fudie.Http;
 global using Fudie.DependencyInjection;
-global using Fudie.Security;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Http;
