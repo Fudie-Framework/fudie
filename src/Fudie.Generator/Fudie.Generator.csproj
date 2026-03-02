@@ -9,6 +9,10 @@
     <IsRoslynComponent>true</IsRoslynComponent>
     <RootNamespace>Fudie.Generator</RootNamespace>
     <AssemblyName>Fudie.Generator</AssemblyName>
+    <Description>Source generator for automatic EF Core repository implementations from interface definitions.</Description>
+    <PackageTags>source-generator;roslyn;repository;efcore;code-generation</PackageTags>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <DevelopmentDependency>true</DevelopmentDependency>
 
     <!-- Análisis más estricto 
     <AnalysisLevel>latest-all</AnalysisLevel>   
@@ -25,6 +29,11 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
     <PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

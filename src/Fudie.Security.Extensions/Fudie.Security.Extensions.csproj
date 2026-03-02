@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Fudie.Security.Extensions</RootNamespace>
     <AssemblyName>Fudie.Security.Extensions</AssemblyName>
+    <Description>JWKS key fetching with in-memory caching for JWT validation.</Description>
+    <PackageTags>jwks;caching;signing-keys;security</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,8 +27,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildFudie.Security.Extensions.props" Pack="true" PackagePath="build\" />
-    <None Include="buildFudie.Security.Extensions.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="buildudie.Security.Extensions.props" Pack="true" PackagePath="build\" />
+    <None Include="buildudie.Security.Extensions.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

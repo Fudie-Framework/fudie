@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Fudie.Http</RootNamespace>
+    <Description>ASP.NET Core infrastructure: global exception handler, feature module discovery, and pipeline configuration.</Description>
+    <PackageTags>aspnetcore;http;exception-handler;minimal-api</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,8 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildFudie.Http.props" Pack="true" PackagePath="build\" />
-    <None Include="buildFudie.Http.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="buildudie.Http.props" Pack="true" PackagePath="build\" />
+    <None Include="buildudie.Http.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Fudie.Security.Http</RootNamespace>
+    <Description>Authorization middleware, endpoint catalog, and security requirements for HTTP APIs.</Description>
+    <PackageTags>authorization;middleware;catalog;http-security</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,8 +24,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildFudie.Security.Http.props" Pack="true" PackagePath="build\" />
-    <None Include="buildFudie.Security.Http.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="buildudie.Security.Http.props" Pack="true" PackagePath="build\" />
+    <None Include="buildudie.Security.Http.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

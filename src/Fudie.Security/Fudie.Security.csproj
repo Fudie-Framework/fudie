@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Fudie.Security</RootNamespace>
     <AssemblyName>Fudie.Security</AssemblyName>
+    <Description>Core security contracts and implementations: password hashing, API key generation, token interfaces.</Description>
+    <PackageTags>security;authentication;bcrypt;api-key</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,8 +20,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildFudie.Security.props" Pack="true" PackagePath="build\" />
-    <None Include="buildFudie.Security.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="buildudie.Security.props" Pack="true" PackagePath="build\" />
+    <None Include="buildudie.Security.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

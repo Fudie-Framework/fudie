@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Description>Messaging core: transport contracts, envelope pattern, scoped message context, and hosted consumer. Provider-agnostic.</Description>
+    <PackageTags>pubsub;messaging;events;transport</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,8 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildFudie.PubSub.props" Pack="true" PackagePath="build\" />
-    <None Include="buildFudie.PubSub.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="buildudie.PubSub.props" Pack="true" PackagePath="build\" />
+    <None Include="buildudie.PubSub.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

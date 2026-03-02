@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Fudie.Security.Jwt</RootNamespace>
     <AssemblyName>Fudie.Security.Jwt</AssemblyName>
+    <Description>JWT token generation and validation using ECDSA keys.</Description>
+    <PackageTags>jwt;ecdsa;token;authentication</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,8 +26,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildFudie.Security.Jwt.props" Pack="true" PackagePath="build\" />
-    <None Include="buildFudie.Security.Jwt.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="buildudie.Security.Jwt.props" Pack="true" PackagePath="build\" />
+    <None Include="buildudie.Security.Jwt.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Description>Fudie framework — all packages in one reference. Install this to get the full framework.</Description>
+    <PackageTags>fudie;framework;microservices;ddd;aspnetcore</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fudie.Domain\Fudie.Domain.csproj" />
+    <ProjectReference Include="..\Fudie.Validation\Fudie.Validation.csproj" />
+    <ProjectReference Include="..\Fudie.Infrastructure\Fudie.Infrastructure.csproj" />
+    <ProjectReference Include="..\Fudie.Generator\Fudie.Generator.csproj" />
+    <ProjectReference Include="..\Fudie.Http\Fudie.Http.csproj" />
+    <ProjectReference Include="..\Fudie.OpenApi\Fudie.OpenApi.csproj" />
+    <ProjectReference Include="..\Fudie.DependencyInjection\Fudie.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Fudie.PubSub\Fudie.PubSub.csproj" />
+    <ProjectReference Include="..\Fudie.Security\Fudie.Security.csproj" />
+    <ProjectReference Include="..\Fudie.Security.Jwt\Fudie.Security.Jwt.csproj" />
+    <ProjectReference Include="..\Fudie.Security.Extensions\Fudie.Security.Extensions.csproj" />
+    <ProjectReference Include="..\Fudie.Security.Http\Fudie.Security.Http.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+</Project>

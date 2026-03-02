@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <Authors>Fudie Framework</Authors>
+    <Company>Fudie Framework</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/Fudie-Framework/fudie</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/Fudie-Framework/fudie</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+</Project>

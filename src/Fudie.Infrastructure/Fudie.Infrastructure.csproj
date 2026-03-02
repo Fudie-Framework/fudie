@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Fudie.Infrastructure</RootNamespace>
+    <Description>EF Core abstractions: repository interfaces, FudieDbContext, unit of work, and change tracking.</Description>
+    <PackageTags>efcore;repository;unit-of-work;infrastructure</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,8 +18,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildFudie.Infrastructure.props" Pack="true" PackagePath="build\" />
-    <None Include="buildFudie.Infrastructure.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="buildudie.Infrastructure.props" Pack="true" PackagePath="build\" />
+    <None Include="buildudie.Infrastructure.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

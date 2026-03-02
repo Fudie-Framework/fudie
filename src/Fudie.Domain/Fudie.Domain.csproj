@@ -5,11 +5,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Fudie.Domain</RootNamespace>
+    <Description>DDD building blocks: entities, aggregate roots, domain events, result pattern, and base command types.</Description>
+    <PackageTags>ddd;domain;entities;events</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="buildFudie.Domain.props" Pack="true" PackagePath="build\" />
-    <None Include="buildFudie.Domain.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="build\Fudie.Domain.props" Pack="true" PackagePath="build\" />
+    <None Include="build\Fudie.Domain.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

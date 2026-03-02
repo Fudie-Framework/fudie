@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Fudie.OpenApi</RootNamespace>
+    <Description>Auto-discovers OpenAPI YAML contracts and configures SwaggerUI.</Description>
+    <PackageTags>openapi;swagger;yaml</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +17,10 @@
   <ItemGroup>
     <None Include="build\Fudie.OpenApi.props" Pack="true" PackagePath="build\" />
     <None Include="build\Fudie.OpenApi.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

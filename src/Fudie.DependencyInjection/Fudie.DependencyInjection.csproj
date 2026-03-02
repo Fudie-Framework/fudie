@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Fudie.DependencyInjection</RootNamespace>
+    <Description>Attribute-based automatic DI registration via assembly scanning.</Description>
+    <PackageTags>dependency-injection;di;attributes;auto-registration</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,8 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildFudie.DependencyInjection.props" Pack="true" PackagePath="build\" />
-    <None Include="buildFudie.DependencyInjection.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="buildudie.DependencyInjection.props" Pack="true" PackagePath="build\" />
+    <None Include="buildudie.DependencyInjection.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

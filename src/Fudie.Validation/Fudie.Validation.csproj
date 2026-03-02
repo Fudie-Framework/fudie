@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Fudie.Validation</RootNamespace>
+    <Description>Guard patterns and result extensions for validation, conflict, not-found, and unauthorized scenarios.</Description>
+    <PackageTags>validation;guards;fluent-validation</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,8 +18,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildFudie.Validation.props" Pack="true" PackagePath="build\" />
-    <None Include="buildFudie.Validation.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="buildudie.Validation.props" Pack="true" PackagePath="build\" />
+    <None Include="buildudie.Validation.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>
