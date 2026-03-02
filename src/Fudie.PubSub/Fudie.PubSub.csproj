@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildudie.PubSub.props" Pack="true" PackagePath="build\" />
-    <None Include="buildudie.PubSub.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="build\Fudie.PubSub.props" Pack="true" PackagePath="build\" />
+    <None Include="build\Fudie.PubSub.props" Pack="true" PackagePath="buildTransitive\" />
   </ItemGroup>
 
   <ItemGroup>

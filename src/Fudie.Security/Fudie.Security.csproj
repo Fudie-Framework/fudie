@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildudie.Security.props" Pack="true" PackagePath="build\" />
-    <None Include="buildudie.Security.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="build\Fudie.Security.props" Pack="true" PackagePath="build\" />
+    <None Include="build\Fudie.Security.props" Pack="true" PackagePath="buildTransitive\" />
   </ItemGroup>
 
   <ItemGroup>

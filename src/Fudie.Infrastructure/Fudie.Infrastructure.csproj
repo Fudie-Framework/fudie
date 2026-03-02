@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="buildudie.Infrastructure.props" Pack="true" PackagePath="build\" />
-    <None Include="buildudie.Infrastructure.props" Pack="true" PackagePath="buildTransitive\" />
+    <None Include="build\Fudie.Infrastructure.props" Pack="true" PackagePath="build\" />
+    <None Include="build\Fudie.Infrastructure.props" Pack="true" PackagePath="buildTransitive\" />
   </ItemGroup>
 
   <ItemGroup>
