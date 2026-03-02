@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "*/v*"
+      - "release/v*"
 
 jobs:
   publish:
@@ -21,11 +22,16 @@ jobs:
         id: tag
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
-          PACKAGE="${TAG%/v*}"
           VERSION="${TAG#*/v}"
-          echo "package=$PACKAGE" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Publishing $PACKAGE version $VERSION"
+
+          if [[ "$TAG" == release/* ]]; then
+            echo "mode=all" >> $GITHUB_OUTPUT
+          else
+            PACKAGE="${TAG%/v*}"
+            echo "mode=single" >> $GITHUB_OUTPUT
+            echo "package=$PACKAGE" >> $GITHUB_OUTPUT
+          fi
 
       - name: Restore
         run: dotnet restore
@@ -36,8 +42,18 @@ jobs:
       - name: Test
         run: dotnet test --no-build --configuration Release --verbosity normal
 
-      - name: Pack
+      - name: Pack single
+        if: steps.tag.outputs.mode == 'single'
         run: dotnet pack src/${{ steps.tag.outputs.package }}/${{ steps.tag.outputs.package }}.csproj --no-build --configuration Release -p:PackageVersion=${{ steps.tag.outputs.version }} --output ./nupkg
+
+      - name: Pack all
+        if: steps.tag.outputs.mode == 'all'
+        run: |
+          VERSION=${{ steps.tag.outputs.version }}
+          for proj in Fudie.Domain Fudie.DependencyInjection Fudie.Validation Fudie.Infrastructure Fudie.Generator Fudie.Http Fudie.OpenApi Fudie.PubSub Fudie.Security Fudie.Security.Jwt Fudie.Security.Extensions Fudie.Security.Http Fudie; do
+            echo "Packing $proj $VERSION"
+            dotnet pack src/$proj/$proj.csproj --no-build --configuration Release -p:PackageVersion=$VERSION --output ./nupkg
+          done
 
       - name: Push to NuGet
         run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
