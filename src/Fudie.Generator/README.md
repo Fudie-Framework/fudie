@@ -1,47 +1,47 @@
 # Fudie.Generator
 
-Source Generator para la generación automática de implementaciones de repositorios con Entity Framework Core.
+Source Generator for automatic repository implementations with Entity Framework Core.
 
-## Tabla de Contenidos
+## Table of Contents
 
-- [Interfaces Base](#interfaces-base)
-- [Atributos](#atributos)
-- [Convenciones de Métodos Query](#convenciones-de-métodos-query)
-  - [Prefijos de Query](#prefijos-de-query)
-  - [Operadores](#operadores)
-  - [Modificadores](#modificadores)
-  - [Ejemplos Completos](#ejemplos-completos)
+- [Base Interfaces](#base-interfaces)
+- [Attributes](#attributes)
+- [Query Method Conventions](#query-method-conventions)
+  - [Query Prefixes](#query-prefixes)
+  - [Operators](#operators)
+  - [Modifiers](#modifiers)
+  - [Full Examples](#full-examples)
 - [Tracking](#tracking)
 
 ---
 
-## Interfaces Base
+## Base Interfaces
 
-El generador reconoce las siguientes interfaces de infraestructura:
+The generator recognizes the following infrastructure interfaces:
 
-| Interface | Descripción | Método Generado |
+| Interface | Description | Generated Method |
 |-----------|-------------|-----------------|
-| `IGet<T, ID>` | Lectura por ID | `Task<T> Get(ID id)` |
-| `IAdd<T>` | Inserción | `void Add(T entity)` |
-| `IUpdate<T, ID>` | Actualización (hereda de IGet) | `Task<T> Get(ID id)` con tracking |
-| `IRemove<T, ID>` | Eliminación (hereda de IGet) | `void Remove(T entity)` |
+| `IGet<T, ID>` | Read by ID | `Task<T> Get(ID id)` |
+| `IAdd<T>` | Insert | `void Add(T entity)` |
+| `IUpdate<T, ID>` | Update (inherits IGet) | `Task<T> Get(ID id)` with tracking |
+| `IRemove<T, ID>` | Delete (inherits IGet) | `void Remove(T entity)` |
 
-### Ejemplo Básico
+### Basic Example
 
 ```csharp
 public interface ICustomerRepository : IGet<Customer, Guid>, IAdd<Customer>
 {
 }
-// Genera: Get(Guid id) y Add(Customer entity)
+// Generates: Get(Guid id) and Add(Customer entity)
 ```
 
 ---
 
-## Atributos
+## Attributes
 
 ### `[GenerateRepository<TEntity>]` / `[GenerateRepository<TEntity, TId>]`
 
-Permite crear repositorios de solo consulta sin exponer métodos `Get(id)` inseguros.
+Allows creating query-only repositories without exposing unsafe `Get(id)` methods.
 
 ```csharp
 [GenerateRepository<Ingredient>]
@@ -53,14 +53,14 @@ public interface IIngredientQueries
 
 ### `[Include<TEntity>("path", ...)]`
 
-Configura eager loading con Include/ThenInclude.
+Configures eager loading with Include/ThenInclude.
 
 ```csharp
 [Include<Customer>("Orders.OrderItems.Product", "Address")]
 public interface ICustomerRepository : IGet<Customer, Guid> { }
 ```
 
-**LINQ Generado:**
+**Generated LINQ:**
 ```csharp
 query = query.Include(c => c.Orders)
     .ThenInclude(o => o.OrderItems)
@@ -70,30 +70,30 @@ query = query.Include(c => c.Address);
 
 ### `[Tracking]` / `[Tracking(bool)]`
 
-Habilita change tracking. Aplicable a **interfaces** y **métodos**.
+Enables change tracking. Applicable to **interfaces** and **methods**.
 
 ### `[AsNoTracking]`
 
-Deshabilita change tracking. Aplicable a **interfaces** y **métodos**.
+Disables change tracking. Applicable to **interfaces** and **methods**.
 
 ### `[AsSplitQuery]`
 
-Usa split queries para evitar cartesian explosion.
+Uses split queries to avoid cartesian explosion.
 
 ### `[IgnoreQueryFilters]`
 
-Ignora los query filters globales (ej: soft delete).
+Ignores global query filters (e.g. soft delete).
 
 ---
 
-## Convenciones de Métodos Query
+## Query Method Conventions
 
-El generador parsea nombres de métodos y genera código LINQ automáticamente.
+The generator parses method names and generates LINQ code automatically.
 
-### Prefijos de Query
+### Query Prefixes
 
-| Prefijo | Retorno | LINQ Final |
-|---------|---------|------------|
+| Prefix | Return Type | Final LINQ |
+|--------|-------------|------------|
 | `FindBy` | `Task<List<T>>` | `.ToListAsync()` |
 | `FindFirstBy` | `Task<T?>` | `.FirstOrDefaultAsync()` |
 | `FindTop{N}By` | `Task<List<T>>` | `.Take(N).ToListAsync()` |
@@ -103,11 +103,11 @@ El generador parsea nombres de métodos y genera código LINQ automáticamente.
 
 ---
 
-### Operadores
+### Operators
 
-| Operador | Uso en Método | LINQ Generado |
-|----------|---------------|---------------|
-| *(ninguno)* / `Equal` | `FindByName` | `x.Name == name` |
+| Operator | Method Usage | Generated LINQ |
+|----------|-------------|----------------|
+| *(none)* / `Equal` | `FindByName` | `x.Name == name` |
 | `NotEqual` | `FindByStatusNotEqual` | `x.Status != status` |
 | `LessThan` | `FindByPriceLessThan` | `x.Price < price` |
 | `LessThanOrEqual` | `FindByAgeLessThanOrEqual` | `x.Age <= age` |
@@ -127,34 +127,34 @@ El generador parsea nombres de métodos y genera código LINQ automáticamente.
 
 ---
 
-### Modificadores
+### Modifiers
 
-#### Conectores Lógicos
+#### Logical Connectors
 
-| Modificador | Uso | LINQ |
-|-------------|-----|------|
+| Modifier | Usage | LINQ |
+|----------|-------|------|
 | `And` | `FindByNameAndAge` | `x.Name == name && x.Age == age` |
 | `Or` | `FindByNameOrEmail` | `x.Name == name \|\| x.Email == email` |
 
 #### Case Insensitive
 
-| Modificador | Uso | LINQ |
-|-------------|-----|------|
+| Modifier | Usage | LINQ |
+|----------|-------|------|
 | `IgnoreCase` | `FindByNameIgnoreCase` | `x.Name.ToLower() == name.ToLower()` |
 
-#### Ordenamiento
+#### Ordering
 
-| Modificador | Uso | LINQ |
-|-------------|-----|------|
+| Modifier | Usage | LINQ |
+|----------|-------|------|
 | `OrderBy{Prop}` | `FindByStatusOrderByName` | `.OrderBy(x => x.Name)` |
 | `OrderBy{Prop}Asc` | `FindByStatusOrderByNameAsc` | `.OrderBy(x => x.Name)` |
 | `OrderBy{Prop}Desc` | `FindByStatusOrderByNameDesc` | `.OrderByDescending(x => x.Name)` |
 
 ---
 
-### Ejemplos Completos
+### Full Examples
 
-#### 1. Búsqueda Simple
+#### 1. Simple Search
 
 ```csharp
 Task<List<Customer>> FindByName(string name);
@@ -168,7 +168,7 @@ return await _query.Query<Customer>()
 
 ---
 
-#### 2. Primer Resultado con Dos Condiciones
+#### 2. First Result with Two Conditions
 
 ```csharp
 Task<Customer?> FindFirstByIdAndRestaurantId(Guid id, Guid restaurantId);
@@ -182,7 +182,7 @@ return await _query.Query<Customer>()
 
 ---
 
-#### 3. Búsqueda con OR
+#### 3. Search with OR
 
 ```csharp
 Task<List<User>> FindByEmailOrPhone(string email, string phone);
@@ -196,7 +196,7 @@ return await _query.Query<User>()
 
 ---
 
-#### 4. Rango de Valores
+#### 4. Value Range
 
 ```csharp
 Task<List<Product>> FindByPriceBetween(decimal min, decimal max);
@@ -210,7 +210,7 @@ return await _query.Query<Product>()
 
 ---
 
-#### 5. Valores en Lista
+#### 5. Values in List
 
 ```csharp
 Task<List<Order>> FindByStatusIn(List<OrderStatus> statuses);
@@ -238,7 +238,7 @@ return await _query.Query<Customer>()
 
 ---
 
-#### 7. Con Ordenamiento
+#### 7. With Ordering
 
 ```csharp
 Task<List<Product>> FindByCategoryOrderByPriceDesc(string category);
@@ -253,7 +253,7 @@ return await _query.Query<Product>()
 
 ---
 
-#### 8. Top N Resultados
+#### 8. Top N Results
 
 ```csharp
 Task<List<Product>> FindTop5ByIsActiveTrue();
@@ -268,7 +268,7 @@ return await _query.Query<Product>()
 
 ---
 
-#### 9. Conteo con Condición
+#### 9. Count with Condition
 
 ```csharp
 Task<int> CountByRestaurantIdAndIsActiveTrue(Guid restaurantId);
@@ -282,7 +282,7 @@ return await _query.Query<Ingredient>()
 
 ---
 
-#### 10. Verificar Existencia
+#### 10. Check Existence
 
 ```csharp
 Task<bool> ExistsByEmailIgnoreCase(string email);
@@ -296,7 +296,7 @@ return await _query.Query<User>()
 
 ---
 
-#### 11. Eliminación Masiva
+#### 11. Bulk Delete
 
 ```csharp
 Task<int> DeleteByIsDeletedTrueAndDeletedAtLessThan(DateTime cutoff);
@@ -324,7 +324,7 @@ return await _query.Query<Customer>()
 
 ---
 
-#### 13. Nulos
+#### 13. Null Checks
 
 ```csharp
 Task<List<Employee>> FindByManagerIsNullAndDepartmentIsNotNull();
@@ -340,44 +340,44 @@ return await _query.Query<Employee>()
 
 ## Tracking
 
-El tracking se puede configurar a nivel de **interfaz** o **método**. El atributo del método tiene prioridad.
+Tracking can be configured at the **interface** or **method** level. Method-level attributes take priority.
 
-### Reglas de Prioridad
+### Priority Rules
 
-1. **Atributo en método** → Siempre gana
-2. **Atributo en interfaz** → Default para métodos sin atributo
-3. **Sin atributos** → Default es `AsNoTracking` (sin tracking)
+1. **Method attribute** -> Always wins
+2. **Interface attribute** -> Default for methods without attribute
+3. **No attributes** -> Default is `AsNoTracking` (no tracking)
 
-### Dependencias Generadas
+### Generated Dependencies
 
-| Configuración | Dependencia Inyectada | Fuente de Query |
-|---------------|----------------------|-----------------|
-| Sin tracking | `IQuery` | `_query.Query<T>()` |
-| Con tracking | `IEntityLookup` | `_entityLookup.Set<T>()` |
-| Mixto | Ambas | Según cada método |
+| Configuration | Injected Dependency | Query Source |
+|---------------|---------------------|--------------|
+| No tracking | `IQuery` | `_query.Query<T>()` |
+| With tracking | `IEntityLookup` | `_entityLookup.Set<T>()` |
+| Mixed | Both | Per method |
 
-### Ejemplo: Tracking Mixto
+### Example: Mixed Tracking
 
 ```csharp
 [GenerateRepository<Ingredient>]
 public interface IIngredientRepository
 {
-    // Sin tracking - solo lectura
+    // No tracking - read only
     [AsNoTracking]
     Task<List<Ingredient>> FindByName(string name);
 
-    // Con tracking - para modificar después
+    // With tracking - for later modification
     [Tracking]
     Task<Ingredient?> FindFirstByIdAndRestaurantId(Guid id, Guid restaurantId);
 }
 ```
 
-**Código Generado:**
+**Generated Code:**
 ```csharp
 public class IngredientRepository : IIngredientRepository
 {
-    private readonly IEntityLookup _entityLookup;  // Para métodos con tracking
-    private readonly IQuery _query;                 // Para métodos sin tracking
+    private readonly IEntityLookup _entityLookup;  // For tracked methods
+    private readonly IQuery _query;                 // For untracked methods
 
     public IngredientRepository(IEntityLookup entityLookup, IQuery query)
     {
@@ -387,45 +387,45 @@ public class IngredientRepository : IIngredientRepository
 
     public async Task<List<Ingredient>> FindByName(string name)
     {
-        return await _query.Query<Ingredient>()  // Sin tracking
+        return await _query.Query<Ingredient>()  // No tracking
             .Where(x => x.Name == name)
             .ToListAsync();
     }
 
     public async Task<Ingredient?> FindFirstByIdAndRestaurantId(Guid id, Guid restaurantId)
     {
-        return await _entityLookup.Set<Ingredient>()  // Con tracking
+        return await _entityLookup.Set<Ingredient>()  // With tracking
             .Where(x => x.Id == id && x.RestaurantId == restaurantId)
             .FirstOrDefaultAsync();
     }
 }
 ```
 
-### Ejemplo: Tracking a Nivel de Interfaz
+### Example: Interface-Level Tracking
 
 ```csharp
 [GenerateRepository<Ingredient>]
-[AsNoTracking]  // Default para todos los métodos
+[AsNoTracking]  // Default for all methods
 public interface IIngredientReadRepository
 {
     Task<List<Ingredient>> FindByRestaurantId(Guid restaurantId);
 
-    [Tracking]  // Override: este método SÍ usa tracking
+    [Tracking]  // Override: this method DOES use tracking
     Task<Ingredient?> FindFirstByIdAndRestaurantId(Guid id, Guid restaurantId);
 }
 ```
 
 ---
 
-## Casos de Uso Multi-Tenant
+## Multi-Tenant Use Cases
 
-Para seguridad en aplicaciones multi-tenant, usa `[GenerateRepository]` en lugar de `IGet`:
+For security in multi-tenant applications, use `[GenerateRepository]` instead of `IGet`:
 
 ```csharp
-// ❌ INSEGURO - Get(id) no filtra por tenant
+// BAD - Get(id) does not filter by tenant
 public interface IIngredientRepository : IGet<Ingredient, Guid> { }
 
-// ✅ SEGURO - Solo expone métodos que requieren tenant
+// GOOD - Only exposes methods that require tenant
 [GenerateRepository<Ingredient>]
 public interface IIngredientRepository
 {
@@ -436,10 +436,10 @@ public interface IIngredientRepository
 
 ---
 
-## Tabla Resumen: Método → LINQ
+## Summary: Method -> LINQ
 
-| Método | LINQ Generado |
-|--------|---------------|
+| Method | Generated LINQ |
+|--------|----------------|
 | `FindByX(v)` | `.Where(x => x.X == v).ToListAsync()` |
 | `FindFirstByX(v)` | `.Where(x => x.X == v).FirstOrDefaultAsync()` |
 | `FindTop10ByX(v)` | `.Where(x => x.X == v).Take(10).ToListAsync()` |

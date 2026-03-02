@@ -1,30 +1,30 @@
 # Fudie.PubSub
 
-Core de mensajeria para la plataforma Fudie. Define contratos, abstracciones y la capa de hosting. **No contiene implementacion de ningun proveedor**.
+Messaging core for the Fudie platform. Defines contracts, abstractions, and the hosting layer. **Does not contain any provider implementation**.
 
-## Estructura
+## Structure
 
 ```
 Fudie.PubSub/
-  Transport/        Contratos de transporte (publish, subscribe, admin)
-  Serialization/    Contrato y default de serializacion
-  Messaging/        Envelope, contexto de mensaje y publisher de alto nivel
-  Hosting/          Handler, MessageHost y configuracion de DI
+  Transport/        Transport contracts (publish, subscribe, admin)
+  Serialization/    Serialization contract and default implementation
+  Messaging/        Envelope, message context, and high-level publisher
+  Hosting/          Handler, MessageHost, and DI configuration
 ```
 
 ## Transport
 
-Interfaces segregadas para operaciones de transporte:
+Segregated interfaces for transport operations:
 
-| Interfaz | Responsabilidad |
-|----------|-----------------|
-| `IPublisher` | Publicar mensajes en un topic |
-| `ISubscriber` | Suscribirse a mensajes de una subscription |
-| `ITopicAdmin` | Crear, eliminar y verificar topics |
-| `ISubscriptionAdmin` | Crear, eliminar y verificar subscriptions |
-| `IPubSubClient` | Interfaz compuesta que agrupa todas las anteriores |
+| Interface | Responsibility |
+|-----------|----------------|
+| `IPublisher` | Publish messages to a topic |
+| `ISubscriber` | Subscribe to messages from a subscription |
+| `ITopicAdmin` | Create, delete, and check topics |
+| `ISubscriptionAdmin` | Create, delete, and check subscriptions |
+| `IPubSubClient` | Composite interface grouping all of the above |
 
-`PubSubClient` es la clase base abstracta que implementa `IPubSubClient` con validacion de argumentos. Los proveedores heredan de ella.
+`PubSubClient` is the abstract base class implementing `IPubSubClient` with argument validation. Providers inherit from it.
 
 ## Serialization
 
@@ -36,13 +36,13 @@ public interface ISerializer
 }
 ```
 
-`JsonPubSubSerializer` es la implementacion por defecto usando `System.Text.Json`. Si no se registra un `ISerializer` en DI, el proveedor usa esta implementacion automaticamente.
+`JsonPubSubSerializer` is the default implementation using `System.Text.Json`. If no `ISerializer` is registered in DI, the provider uses this implementation automatically.
 
 ## Messaging
 
 ### Envelope
 
-Cada mensaje viaja envuelto en un `Envelope<T>`:
+Each message travels wrapped in an `Envelope<T>`:
 
 ```csharp
 public record Envelope<T>(
@@ -55,11 +55,11 @@ public record Envelope<T>(
 );
 ```
 
-El desarrollador nunca interactua con el envelope directamente. `MessagePublisher` lo construye al publicar y `MessageHost` lo desenvuelve al recibir.
+Developers never interact with the envelope directly. `MessagePublisher` builds it when publishing and `MessageHost` unwraps it when receiving.
 
 ### IMessageContext
 
-Contexto scoped que expone los datos del mensaje actual:
+Scoped context exposing data from the current message:
 
 ```csharp
 public interface IMessageContext
@@ -71,15 +71,15 @@ public interface IMessageContext
 }
 ```
 
-Se inyecta en handlers, DbContexts (para QueryFilters multi-tenant) y cualquier servicio scoped. Se puebla automaticamente desde:
+Injected into handlers, DbContexts (for multi-tenant QueryFilters), and any scoped service. Automatically populated from:
 
-- **HTTP middleware** (claims del JWT)
-- **Outbox worker** (claims almacenados)
-- **MessageHost** (claims del envelope al recibir un mensaje)
+- **HTTP middleware** (JWT claims)
+- **Outbox worker** (stored claims)
+- **MessageHost** (envelope claims when receiving a message)
 
 ### MessagePublisher
 
-`IMessagePublisher` es la interfaz de alto nivel para publicar mensajes:
+`IMessagePublisher` is the high-level interface for publishing messages:
 
 ```csharp
 public interface IMessagePublisher
@@ -88,13 +88,13 @@ public interface IMessagePublisher
 }
 ```
 
-Envuelve `T` en `Envelope<T>` usando los claims del `IMessageContext` actual.
+Wraps `T` in `Envelope<T>` using claims from the current `IMessageContext`.
 
 ## Hosting
 
 ### IMessageHandler\<T\>
 
-Contrato para consumir mensajes:
+Contract for consuming messages:
 
 ```csharp
 public interface IMessageHandler<in T>
@@ -105,36 +105,36 @@ public interface IMessageHandler<in T>
 
 ### MessageHost
 
-Orquesta la recepcion de mensajes. Por cada mensaje:
+Orchestrates message reception. For each message:
 
-1. Crea un scope de DI
-2. Puebla `MessageContext` con los claims y correlationId del envelope
-3. Resuelve `IMessageHandler<T>` dentro del scope
-4. Ejecuta el handler
+1. Creates a DI scope
+2. Populates `MessageContext` with claims and correlationId from the envelope
+3. Resolves `IMessageHandler<T>` within the scope
+4. Executes the handler
 
-Esto garantiza que cada mensaje tiene su propio scope, con `IMessageContext` y `DbContext` independientes.
+This ensures each message has its own scope with independent `IMessageContext` and `DbContext`.
 
-### Configuracion
+### Configuration
 
 ```csharp
 builder.Services.AddPubSubMessaging(pubsub =>
 {
-    pubsub.UseGcp(builder.Configuration);  // extension del proveedor
+    pubsub.UseGcp(builder.Configuration);  // provider extension
 });
 ```
 
-`AddPubSubMessaging` registra:
+`AddPubSubMessaging` registers:
 
-| Servicio | Lifetime |
-|----------|----------|
+| Service | Lifetime |
+|---------|----------|
 | `MessageContext` / `IMessageContext` | Scoped |
 | `IMessagePublisher` | Scoped |
 | `MessageHost` | Singleton |
 
-El proveedor (ej. `UseGcp`) registra `IPubSubClient` como Singleton.
+The provider (e.g. `UseGcp`) registers `IPubSubClient` as Singleton.
 
-## Dependencias
+## Dependencies
 
-Este proyecto **no tiene dependencias de proveedor**. Solo depende de:
+This project **has no provider dependencies**. It only depends on:
 
 - `Microsoft.Extensions.DependencyInjection.Abstractions`

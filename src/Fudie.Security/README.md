@@ -1,4 +1,4 @@
-# Fudie Security
+# Fudie.Security
 
 Security infrastructure for Fudie microservices. Split into four packages with clear responsibilities.
 
@@ -9,14 +9,14 @@ Security infrastructure for Fudie microservices. Split into four packages with c
 | **Fudie.Security** | Core contracts (`IPasswordHasher`, `IApiKeyGenerator`, `IFudieUser`, `ITokenGenerator`, `IJwtValidator`) and implementations (`BcryptPasswordHasher`, `ApiKeyGenerator`) |
 | **Fudie.Security.Jwt** | JWT token generation and validation (`JwtValidator`, `ISigningKeyProvider`) |
 | **Fudie.Security.Extensions** | JWKS key fetching with in-memory caching |
-| **Fudie.Security.Api** | Authorization middleware, endpoint catalog, and security requirements for HTTP APIs |
+| **Fudie.Security.Http** | Authorization middleware, endpoint catalog, and security requirements for HTTP APIs |
 
 ## Dependency Graph
 
 ```
-Fudie.Security.Api
+Fudie.Security.Http
   -> Fudie.Security
-  -> Fudie.Api
+  -> Fudie.Http
   -> Fudie.DependencyInjection
 
 Fudie.Security.Extensions
@@ -29,7 +29,7 @@ Fudie.Security.Extensions
 
 Reference the packages your service needs:
 
-- **All HTTP services** need `Fudie.Security.Api` + `Fudie.Security.Extensions`
+- **All HTTP services** need `Fudie.Security.Http` + `Fudie.Security.Extensions`
 - **Auth service** (token issuer) needs `Fudie.Security` + `Fudie.Security.Jwt` directly
 
 ## Configuration
@@ -78,7 +78,7 @@ featureBuilder.UseFudieAuthorization();
 - Registers `ISigningKeyProvider` (singleton)
 - Registers `IJwtValidator` (singleton, if not already registered)
 
-**`UseFudieAuthorization()`** (from `Fudie.Security.Api`):
+**`UseFudieAuthorization()`** (from `Fudie.Security.Http`):
 - Discovers `IAggregateDescription` implementations across loaded assemblies
 - Registers all feature endpoints in the `ICatalogRegistry`
 - Adds `FudieAuthorizationMiddleware` to the pipeline
