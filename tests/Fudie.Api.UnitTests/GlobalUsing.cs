@@ -1,0 +1,12 @@
+global using System.Reflection;
+global using System.Text.Json;
+global using FluentAssertions;
+global using FluentValidation;
+global using FluentValidation.Results;
+global using Fudie.Api;
+global using Fudie.Domain;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Http.Features;
+global using Microsoft.AspNetCore.Routing;
+global using Microsoft.Extensions.DependencyInjection;

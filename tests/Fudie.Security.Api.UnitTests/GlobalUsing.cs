@@ -1,0 +1,16 @@
+global using FluentAssertions;
+global using Fudie.Api;
+global using Fudie.Security;
+global using Fudie.Security.Api;
+global using Moq;
+global using System.Reflection;
+global using System.Security.Claims;
+global using System.Text.Json;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Routing;
+global using Microsoft.AspNetCore.Routing.Patterns;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Logging;

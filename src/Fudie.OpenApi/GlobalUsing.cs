@@ -1,0 +1,6 @@
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.StaticFiles;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.FileProviders;
+global using Microsoft.Extensions.Hosting;

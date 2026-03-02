@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Fudie.Security.Api</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Fudie.Security.Api.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fudie.Api\Fudie.Api.csproj" />
+    <ProjectReference Include="..\Fudie.Security\Fudie.Security.csproj" />
+    <ProjectReference Include="..\Fudie.DependencyInjection\Fudie.DependencyInjection.csproj" />
+  </ItemGroup>
+
+</Project>

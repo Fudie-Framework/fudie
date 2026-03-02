@@ -1,0 +1,3 @@
+global using Fudie.Domain;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.ChangeTracking;

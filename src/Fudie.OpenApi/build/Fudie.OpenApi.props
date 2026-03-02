@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <FudieOpenApiFolder Condition="'$(FudieOpenApiFolder)' == ''">OpenApi</FudieOpenApiFolder>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(FudieOpenApiFolder)\**\*.yaml" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
