@@ -3,7 +3,7 @@
 Modular .NET 8 framework for building microservices. Each package is independent and composable — reference only what you need.
 
 [![CI](https://github.com/Fudie-Framework/fudie/actions/workflows/ci.yml/badge.svg)](https://github.com/Fudie-Framework/fudie/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/Fudie-Framework/fudie/branch/main/graph/badge.svg)](https://codecov.io/gh/Fudie-Framework/fudie)
+[![codecov]https://codecov.io/gh/Fudie-Framework/fudie/branch/main/graph/badge.svg?token=H0SMW35UIF)](https://codecov.io/gh/Fudie-Framework/fudie)
 
 ## Packages
 
