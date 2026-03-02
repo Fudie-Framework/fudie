@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="buildFudie.PubSub.props" Pack="true" PackagePath="build\" />
+    <None Include="buildFudie.PubSub.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
 </Project>

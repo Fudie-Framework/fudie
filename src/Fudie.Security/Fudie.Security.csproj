@@ -17,4 +17,9 @@
     <ProjectReference Include="..\Fudie.DependencyInjection\Fudie.DependencyInjection.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="buildFudie.Security.props" Pack="true" PackagePath="build\" />
+    <None Include="buildFudie.Security.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
 </Project>

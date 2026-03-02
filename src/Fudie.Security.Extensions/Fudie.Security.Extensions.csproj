@@ -24,4 +24,9 @@
     <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="buildFudie.Security.Extensions.props" Pack="true" PackagePath="build\" />
+    <None Include="buildFudie.Security.Extensions.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
 </Project>

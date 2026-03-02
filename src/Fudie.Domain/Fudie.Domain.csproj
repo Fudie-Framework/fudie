@@ -7,4 +7,9 @@
     <RootNamespace>Fudie.Domain</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="buildFudie.Domain.props" Pack="true" PackagePath="build\" />
+    <None Include="buildFudie.Domain.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
 </Project>

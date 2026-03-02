@@ -1,0 +1,5 @@
+<Project>
+  <ItemGroup>
+    <Using Include="Fudie.Security.Http" />
+  </ItemGroup>
+</Project>

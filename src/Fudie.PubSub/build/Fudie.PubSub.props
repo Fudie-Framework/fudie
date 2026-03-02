@@ -1,0 +1,8 @@
+<Project>
+  <ItemGroup>
+    <Using Include="Fudie.PubSub.Transport" />
+    <Using Include="Fudie.PubSub.Messaging" />
+    <Using Include="Fudie.PubSub.Hosting" />
+    <Using Include="Fudie.PubSub.Serialization" />
+  </ItemGroup>
+</Project>

@@ -15,4 +15,9 @@
     <ProjectReference Include="..\Fudie.Domain\Fudie.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="buildFudie.Validation.props" Pack="true" PackagePath="build\" />
+    <None Include="buildFudie.Validation.props" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
 </Project>

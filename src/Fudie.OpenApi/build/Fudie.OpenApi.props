@@ -5,4 +5,7 @@
   <ItemGroup>
     <Content Include="$(FudieOpenApiFolder)\**\*.yaml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  <ItemGroup>
+    <Using Include="Fudie.OpenApi" />
+  </ItemGroup>
 </Project>
