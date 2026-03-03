@@ -13,6 +13,7 @@
     <PackageTags>source-generator;roslyn;repository;efcore;code-generation</PackageTags>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <DevelopmentDependency>true</DevelopmentDependency>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <!-- Análisis más estricto 
     <AnalysisLevel>latest-all</AnalysisLevel>   
