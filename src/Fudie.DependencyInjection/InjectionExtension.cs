@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 namespace Fudie.DependencyInjection;
 
 /// <summary>
@@ -21,10 +23,7 @@ public static class InjectionExtension
     {
         if (assemblies.Length == 0)
         {
-            assemblies = [
-                Assembly.GetCallingAssembly(),
-                typeof(InjectableAttribute).Assembly
-            ];
+            assemblies = DiscoverRelevantAssemblies();
         }
 
         var injectableTypes = DiscoverInjectableTypes(assemblies);
@@ -157,6 +156,17 @@ public static class InjectionExtension
         return topLevelInterfaces;
     }
 
+    private static Assembly[] DiscoverRelevantAssemblies()
+    {
+        var attributeAssemblyName = typeof(InjectableAttribute).Assembly.GetName().Name;
+
+        return AppDomain.CurrentDomain
+            .GetAssemblies()
+            .Where(a => !a.IsDynamic
+                && a.GetReferencedAssemblies().Any(r => r.Name == attributeAssemblyName))
+            .ToArray();
+    }
+
     private static bool IsServiceRegistered(IServiceCollection services, Type serviceType)
     {
         return services.Any(descriptor => descriptor.ServiceType == serviceType);
@@ -169,7 +179,7 @@ public static class InjectionExtension
         ServiceLifetime lifetime)
     {
         var serviceDescriptor = CreateServiceDescriptor(serviceType, implementationType, lifetime);
-        services.Add(serviceDescriptor);
+        services.TryAdd(serviceDescriptor);
     }
 
     private static void RegisterServiceFromFactory(
@@ -179,7 +189,7 @@ public static class InjectionExtension
         ServiceLifetime lifetime)
     {
         var serviceDescriptor = CreateServiceDescriptor(serviceType, implementationFactory, lifetime);
-        services.Add(serviceDescriptor);
+        services.TryAdd(serviceDescriptor);
     }
 
     private static ServiceDescriptor CreateServiceDescriptor(
