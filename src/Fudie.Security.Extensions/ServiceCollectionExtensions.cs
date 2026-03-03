@@ -41,9 +41,24 @@ public static class ServiceCollectionExtensions
                 client.BaseAddress = new Uri(opts.JwksUrl);
             });
 
-        services.AddSingleton<ISigningKeyProvider, JwksSigningKeyProvider>();
+        services.TryAddSingleton<ISigningKeyProvider>(sp =>
+            new JwksSigningKeyProvider(
+                sp.GetRequiredService<IJwksApi>(),
+                sp.GetRequiredService<IMemoryCache>(),
+                sp.GetRequiredService<IOptions<FudieSecurityOptions>>()));
         services.TryAddSingleton<IJwtValidator, JwtValidator>();
 
+        return services;
+    }
+
+    /// <summary>
+    /// Registers JWT validation using the local <see cref="IJwtKeyProvider"/> (no HTTP calls).
+    /// Use this when the service already has the signing key locally (e.g., Auth service).
+    /// </summary>
+    public static IServiceCollection AddFudieLocalJwtValidation(this IServiceCollection services)
+    {
+        services.TryAddSingleton<ISigningKeyProvider, LocalSigningKeyProvider>();
+        services.TryAddSingleton<IJwtValidator, JwtValidator>();
         return services;
     }
 

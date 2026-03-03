@@ -116,4 +116,56 @@ public class ServiceCollectionExtensionsTests
         var provider = services.BuildServiceProvider();
         provider.GetService<ISigningKeyProvider>().Should().NotBeNull();
     }
+
+    [Fact]
+    public void AddFudieJwksProvider_DoesNotOverrideExistingSigningKeyProvider()
+    {
+        var services = CreateServicesWithConfig(new Dictionary<string, string?>
+        {
+            ["Fudie:Security:JwksUrl"] = "http://localhost/jwks"
+        });
+        var existing = new Mock<ISigningKeyProvider>();
+        services.AddSingleton(existing.Object);
+
+        services.AddFudieJwksProvider();
+
+        var provider = services.BuildServiceProvider();
+        provider.GetService<ISigningKeyProvider>().Should().BeSameAs(existing.Object);
+    }
+
+    [Fact]
+    public void AddFudieLocalJwtValidation_RegistersServices()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton(new Mock<IJwtKeyProvider>().Object);
+
+        services.AddFudieLocalJwtValidation();
+
+        var provider = services.BuildServiceProvider();
+        provider.GetService<ISigningKeyProvider>().Should().BeOfType<LocalSigningKeyProvider>();
+        provider.GetService<IJwtValidator>().Should().NotBeNull();
+    }
+
+    [Fact]
+    public void AddFudieLocalJwtValidation_ReturnsSameServiceCollection()
+    {
+        var services = new ServiceCollection();
+
+        var result = services.AddFudieLocalJwtValidation();
+
+        result.Should().BeSameAs(services);
+    }
+
+    [Fact]
+    public void AddFudieLocalJwtValidation_DoesNotOverrideExistingSigningKeyProvider()
+    {
+        var services = new ServiceCollection();
+        var existing = new Mock<ISigningKeyProvider>();
+        services.AddSingleton(existing.Object);
+
+        services.AddFudieLocalJwtValidation();
+
+        var provider = services.BuildServiceProvider();
+        provider.GetService<ISigningKeyProvider>().Should().BeSameAs(existing.Object);
+    }
 }

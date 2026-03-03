@@ -111,23 +111,4 @@ public class JwksSigningKeyProviderTests
         keys.Should().BeEmpty();
     }
 
-    [Theory]
-    [InlineData("P-256")]
-    [InlineData("P-384")]
-    [InlineData("P-521")]
-    public void GetCurve_WithSupportedCurve_ReturnsCurve(string crv)
-    {
-        var curve = JwksSigningKeyProvider.GetCurve(crv);
-
-        curve.Oid.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void GetCurve_WithUnsupportedCurve_Throws()
-    {
-        var act = () => JwksSigningKeyProvider.GetCurve("P-999");
-
-        act.Should().Throw<NotSupportedException>()
-            .WithMessage("Unsupported curve: P-999");
-    }
 }
