@@ -177,6 +177,46 @@ public class FudieOpenApiExtensionsTests : IDisposable
         result.Should().BeSameAs(app);
     }
 
+    [Fact]
+    public async Task UseFudieOpenApi_WithCustomRequestPath_ShouldServeYamlAtPrefixedUrl()
+    {
+        // Arrange
+        CreateYamlFile("OpenApi", "plan-api.yaml");
+        var config = new Dictionary<string, string?>
+        {
+            ["Fudie:OpenApi:RequestPath"] = "plans/OpenApi",
+            ["Fudie:OpenApi:RoutePrefix"] = "plans/swagger"
+        };
+        var app = BuildApp(useTestServer: true, config: config);
+        app.UseFudieOpenApi();
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        // Act
+        var yamlResponse = await client.GetAsync("/plans/OpenApi/plan-api.yaml");
+        var redirectResponse = await client.GetAsync("/");
+
+        // Assert
+        yamlResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        yamlResponse.Headers.CacheControl!.NoCache.Should().BeTrue();
+        redirectResponse.Headers.Location!.ToString().Should().Be("/plans/swagger");
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public void UseFudieOpenApi_WithCredentialsFalse_ShouldConfigureWithoutInterceptor()
+    {
+        // Arrange
+        CreateYamlFile("OpenApi", "api.yaml");
+        var app = BuildApp();
+
+        // Act
+        var result = app.UseFudieOpenApi(withCredentials: false);
+
+        // Assert
+        result.Should().BeSameAs(app);
+    }
+
     #endregion
 
     #region Cache Control Tests

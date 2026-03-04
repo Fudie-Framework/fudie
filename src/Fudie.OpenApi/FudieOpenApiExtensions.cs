@@ -14,20 +14,24 @@ public static class FudieOpenApiExtensions
     /// changes are reflected immediately without clearing the browser cache.
     /// </summary>
     /// <param name="app">The web application.</param>
+    /// <param name="withCredentials">
+    /// When <c>true</c> (default), configures SwaggerUI to send cookies with every request
+    /// so cookie-based authentication works out of the box during development.
+    /// </param>
     /// <returns>The web application for chaining.</returns>
-    public static WebApplication UseFudieOpenApi(this WebApplication app)
+    public static WebApplication UseFudieOpenApi(this WebApplication app, bool withCredentials = true)
     {
         if (!app.Environment.IsDevelopment())
             return app;
 
-        var (folder, routePrefix) = ReadConfiguration(app);
+        var (folder, requestPath, routePrefix) = ReadConfiguration(app);
         var openApiPath = Path.Combine(app.Environment.ContentRootPath, folder);
         var yamlFiles = DiscoverYamlContracts(openApiPath);
 
         if (yamlFiles.Length == 0)
             return app;
 
-        RegisterMiddleware(app, openApiPath, folder, routePrefix, yamlFiles);
+        RegisterMiddleware(app, openApiPath, requestPath, routePrefix, yamlFiles, withCredentials);
 
         return app;
     }
@@ -45,14 +49,15 @@ public static class FudieOpenApiExtensions
     }
 
     /// <summary>
-    /// Reads the OpenApi folder and route prefix from configuration,
-    /// falling back to <c>OpenApi</c> and <c>swagger</c> respectively.
+    /// Reads the OpenApi folder, request path, and route prefix from configuration,
+    /// falling back to <c>OpenApi</c>, the folder value, and <c>swagger</c> respectively.
     /// </summary>
-    private static (string folder, string routePrefix) ReadConfiguration(WebApplication app)
+    private static (string folder, string requestPath, string routePrefix) ReadConfiguration(WebApplication app)
     {
         var folder = app.Configuration.GetValue<string>("Fudie:OpenApi:Folder") ?? "OpenApi";
+        var requestPath = app.Configuration.GetValue<string>("Fudie:OpenApi:RequestPath") ?? folder;
         var routePrefix = app.Configuration.GetValue<string>("Fudie:OpenApi:RoutePrefix") ?? "swagger";
-        return (folder, routePrefix);
+        return (folder, requestPath, routePrefix);
     }
 
     /// <summary>
@@ -62,35 +67,36 @@ public static class FudieOpenApiExtensions
     private static void RegisterMiddleware(
         WebApplication app,
         string openApiPath,
-        string folder,
+        string requestPath,
         string routePrefix,
-        string[] yamlFiles)
+        string[] yamlFiles,
+        bool withCredentials)
     {
-        var provider = new PhysicalFileProvider(openApiPath);
-        var contentTypeProvider = new FileExtensionContentTypeProvider();
-        contentTypeProvider.Mappings[".yaml"] = "application/x-yaml";
+        var fileProvider = new PhysicalFileProvider(openApiPath);
+        var provider = new FileExtensionContentTypeProvider();
+        provider.Mappings[".yaml"] = "application/x-yaml";
 
         app.UseStaticFiles(new StaticFileOptions
         {
-            FileProvider = provider,
-            RequestPath = $"/{folder}",
-            ContentTypeProvider = contentTypeProvider,
-            OnPrepareResponse = ctx =>
-            {
-                ctx.Context.Response.Headers.CacheControl = "no-cache";
-            }
+            FileProvider = fileProvider,
+            RequestPath = $"/{requestPath}",
+            ContentTypeProvider = provider,
+            OnPrepareResponse = ctx => ctx.Context.Response.Headers.CacheControl = "no-cache"
         });
 
         app.UseSwaggerUI(options =>
         {
             options.RoutePrefix = routePrefix;
 
-            foreach (var yamlFile in yamlFiles)
+            foreach (var path in yamlFiles)
             {
-                var relativePath = Path.GetRelativePath(openApiPath, yamlFile).Replace('\\', '/');
-                var name = Path.GetFileNameWithoutExtension(yamlFile);
-                options.SwaggerEndpoint($"/{folder}/{relativePath}", name);
+                var text = Path.GetRelativePath(openApiPath, path).Replace('\\', '/');
+                var name = Path.GetFileNameWithoutExtension(path);
+                options.SwaggerEndpoint($"/{requestPath}/{text}", name);
             }
+
+            if (withCredentials)
+                options.UseRequestInterceptor("(req) => { req.credentials = 'include'; return req; }");
         });
 
         app.MapGet("/", () => Results.Redirect($"/{routePrefix}")).AllowAnonymous();
