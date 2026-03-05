@@ -133,6 +133,42 @@ public class FudieAuthorizationMiddlewareTests
 
     #endregion
 
+    #region AuthenticatedRequirement
+
+    [Fact]
+    public async Task InvokeAsync_AuthenticatedRequirement_WithValidToken_ShouldCallNext()
+    {
+        var context = CreateContext(new AuthenticatedRequirement());
+        SetupValidToken();
+        context.Request.Headers.Authorization = "Bearer valid-token";
+        var middleware = CreateMiddleware();
+
+        await middleware.InvokeAsync(context, _jwtValidator.Object, _catalog, _config);
+
+        _nextCalled.Should().BeTrue();
+        context.Items["FudieTokenContext"].Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task InvokeAsync_AuthenticatedRequirement_ExcludedScope_ShouldStillAllow()
+    {
+        var endpoint = new Endpoint(
+            _ => Task.CompletedTask,
+            new EndpointMetadataCollection(new AuthenticatedRequirement()),
+            "TestEndpoint");
+        var context = CreateContextWithEndpoint(endpoint);
+        _catalog.Register("TestEndpoint", endpoint, new TestAggregate());
+        SetupValidToken(excludedScopes: ["TestEndpoint"]);
+        context.Request.Headers.Authorization = "Bearer valid-token";
+        var middleware = CreateMiddleware();
+
+        await middleware.InvokeAsync(context, _jwtValidator.Object, _catalog, _config);
+
+        _nextCalled.Should().BeTrue();
+    }
+
+    #endregion
+
     #region Platform
 
     [Fact]

@@ -95,6 +95,9 @@ public class FudieAuthorizationMiddleware(RequestDelegate next)
 
         if (tokenContext.IsOwner) return null;
 
+        if (metadata.GetMetadata<AuthenticatedRequirement>() is not null)
+            return null;
+
         var className = catalogRegistry.FindClassName(endpoint);
 
         if (IsExcludedScope(className, tokenContext))
