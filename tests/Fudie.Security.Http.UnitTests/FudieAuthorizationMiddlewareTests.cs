@@ -138,8 +138,13 @@ public class FudieAuthorizationMiddlewareTests
     [Fact]
     public async Task InvokeAsync_Platform_WithCorrectTenant_ShouldCallNext()
     {
-        var context = CreateContext(new PlatformRequirement());
-        SetupValidToken(tenantId: TenantId);
+        var endpoint = new Endpoint(
+            _ => Task.CompletedTask,
+            new EndpointMetadataCollection(new PlatformRequirement()),
+            "test-endpoint");
+        var context = CreateContextWithEndpoint(endpoint);
+        _catalog.Register("test-endpoint", endpoint, new TestAggregate());
+        SetupValidToken(tenantId: TenantId, groups: ["test:read"]);
         context.Request.Headers.Authorization = "Bearer valid-token";
         var middleware = CreateMiddleware();
 
@@ -253,7 +258,13 @@ public class FudieAuthorizationMiddlewareTests
     [Fact]
     public async Task InvokeAsync_GroupRequirement_WithMatchingGroup_ShouldCallNext()
     {
-        var context = CreateContext(new GroupRequirement("menu:read", "Read menus"));
+        var groupReq = new GroupRequirement("menu:read", "Read menus");
+        var endpoint = new Endpoint(
+            _ => Task.CompletedTask,
+            new EndpointMetadataCollection(groupReq),
+            "test-endpoint");
+        var context = CreateContextWithEndpoint(endpoint);
+        _catalog.Register("test-endpoint", endpoint, new TestAggregate());
         SetupValidToken(groups: ["menu:read"]);
         context.Request.Headers.Authorization = "Bearer valid-token";
         var middleware = CreateMiddleware();
@@ -266,7 +277,13 @@ public class FudieAuthorizationMiddlewareTests
     [Fact]
     public async Task InvokeAsync_GroupRequirement_WithoutMatchingGroup_ShouldReturn403()
     {
-        var context = CreateContext(new GroupRequirement("menu:read", "Read menus"));
+        var groupReq = new GroupRequirement("menu:read", "Read menus");
+        var endpoint = new Endpoint(
+            _ => Task.CompletedTask,
+            new EndpointMetadataCollection(groupReq),
+            "test-endpoint");
+        var context = CreateContextWithEndpoint(endpoint);
+        _catalog.Register("test-endpoint", endpoint, new TestAggregate());
         SetupValidToken(groups: ["other:read"]);
         context.Request.Headers.Authorization = "Bearer valid-token";
         var middleware = CreateMiddleware();
@@ -278,13 +295,29 @@ public class FudieAuthorizationMiddlewareTests
 
     #endregion
 
-    #region No special requirements
+    #region Scope Access (deny by default)
 
     [Fact]
-    public async Task InvokeAsync_NoRequirements_WithValidToken_ShouldCallNext()
+    public async Task InvokeAsync_NoScope_WithValidToken_ShouldReturn403()
     {
         var context = CreateContext();
         SetupValidToken();
+        context.Request.Headers.Authorization = "Bearer valid-token";
+        var middleware = CreateMiddleware();
+
+        await middleware.InvokeAsync(context, _jwtValidator.Object, _catalog, _config);
+
+        context.Response.StatusCode.Should().Be(403);
+        _nextCalled.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithMatchingScope_ShouldCallNext()
+    {
+        var endpoint = CreateEndpointWithDisplayName("test-endpoint");
+        var context = CreateContextWithEndpoint(endpoint);
+        _catalog.Register("test-endpoint", endpoint, new TestAggregate());
+        SetupValidToken(groups: ["test:read"]);
         context.Request.Headers.Authorization = "Bearer valid-token";
         var middleware = CreateMiddleware();
 
@@ -300,8 +333,10 @@ public class FudieAuthorizationMiddlewareTests
     [Fact]
     public async Task InvokeAsync_WithTenantId_ShouldSetTidClaim()
     {
-        var context = CreateContext();
-        SetupValidToken(tenantId: TenantId);
+        var endpoint = CreateEndpointWithDisplayName("test-endpoint");
+        var context = CreateContextWithEndpoint(endpoint);
+        _catalog.Register("test-endpoint", endpoint, new TestAggregate());
+        SetupValidToken(tenantId: TenantId, groups: ["test:read"]);
         context.Request.Headers.Authorization = "Bearer valid-token";
         var middleware = CreateMiddleware();
 
@@ -326,8 +361,10 @@ public class FudieAuthorizationMiddlewareTests
     [Fact]
     public async Task InvokeAsync_WithNoTenantId_ShouldNotSetTidClaim()
     {
-        var context = CreateContext();
-        SetupValidToken(tenantId: null);
+        var endpoint = CreateEndpointWithDisplayName("test-endpoint");
+        var context = CreateContextWithEndpoint(endpoint);
+        _catalog.Register("test-endpoint", endpoint, new TestAggregate());
+        SetupValidToken(tenantId: null, groups: ["test:read"]);
         context.Request.Headers.Authorization = "Bearer valid-token";
         var middleware = CreateMiddleware();
 

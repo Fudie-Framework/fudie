@@ -104,7 +104,7 @@ public class FudieAuthorizationMiddleware(RequestDelegate next)
         if (IsAdditionalScope(className, tokenContext))
             return null;
 
-        return CheckGroupAccess(metadata, tokenContext);
+        return CheckScopeAccess(catalogRegistry, endpoint, tokenContext);
     }
 
     private static (int StatusCode, string Title, string Detail, string Type)? CheckPlatformAccess(
@@ -127,15 +127,16 @@ public class FudieAuthorizationMiddleware(RequestDelegate next)
     private static bool IsAdditionalScope(string? className, FudieTokenContext tokenContext)
         => className is not null && tokenContext.AdditionalScopes.Contains(className);
 
-    private static (int StatusCode, string Title, string Detail, string Type)? CheckGroupAccess(
-        EndpointMetadataCollection metadata, FudieTokenContext tokenContext)
+    private static (int StatusCode, string Title, string Detail, string Type)? CheckScopeAccess(
+        ICatalogRegistry catalogRegistry, Endpoint endpoint, FudieTokenContext tokenContext)
     {
-        var groupRequirement = metadata.GetMetadata<GroupRequirement>();
-        if (groupRequirement is not null && !tokenContext.Groups.Contains(groupRequirement.Group))
-            return (StatusCodes.Status403Forbidden, "Forbidden",
-                "Insufficient permissions", "https://tools.ietf.org/html/rfc7231#section-6.5.3");
+        var scope = catalogRegistry.FindScope(endpoint);
 
-        return null;
+        if (scope is not null && tokenContext.Groups.Contains(scope))
+            return null;
+
+        return (StatusCodes.Status403Forbidden, "Forbidden",
+            "Insufficient permissions", "https://tools.ietf.org/html/rfc7231#section-6.5.3");
     }
 
     private static async Task<FudieTokenContext?> ValidateJwt(HttpContext context, IJwtValidator jwtValidator)

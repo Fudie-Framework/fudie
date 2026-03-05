@@ -9,21 +9,22 @@ public class CatalogRegistry : ICatalogRegistry
     private readonly Dictionary<string, CatalogEntry> _entries = [];
     private readonly Dictionary<string, Endpoint> _endpointMap = [];
     private readonly Dictionary<string, string> _classNameMap = [];
+    private readonly Dictionary<string, string> _scopeMap = [];
 
     /// <inheritdoc />
     public void Register(string className, Endpoint endpoint, IAggregateDescription aggregate)
     {
         var displayName = endpoint.DisplayName ?? className;
         var metadata = endpoint.Metadata;
+        var httpMethod = ResolveHttpMethod(metadata);
+        var groupRequirement = metadata.GetMetadata<GroupRequirement>();
 
         _endpointMap[displayName] = endpoint;
         _classNameMap[displayName] = className;
+        _scopeMap[displayName] = ResolveScope(groupRequirement, httpMethod, aggregate);
 
         if (metadata.GetMetadata<ExcludeFromDescriptionAttribute>() is not null)
             return;
-
-        var httpMethod = ResolveHttpMethod(metadata);
-        var groupRequirement = metadata.GetMetadata<GroupRequirement>();
 
         _entries[displayName] = new CatalogEntry(
             ClassName: className,
@@ -39,7 +40,7 @@ public class CatalogRegistry : ICatalogRegistry
             AggregateIcon: aggregate.Icon,
             AggregateReadDescription: aggregate.ReadDescription,
             AggregateWriteDescription: aggregate.WriteDescription,
-            Scope: ResolveScope(groupRequirement, httpMethod, aggregate),
+            Scope: _scopeMap[displayName],
             ScopeDescription: ResolveScopeDescription(groupRequirement, httpMethod, aggregate));
     }
 
@@ -70,6 +71,11 @@ public class CatalogRegistry : ICatalogRegistry
     public string? FindClassName(Endpoint endpoint)
         => endpoint.DisplayName is not null
             && _classNameMap.TryGetValue(endpoint.DisplayName, out var name) ? name : null;
+
+    /// <inheritdoc />
+    public string? FindScope(Endpoint endpoint)
+        => endpoint.DisplayName is not null
+            && _scopeMap.TryGetValue(endpoint.DisplayName, out var scope) ? scope : null;
 
     /// <inheritdoc />
     public int EndpointMapCount => _entries.Count;

@@ -21,6 +21,11 @@ public interface ICatalogRegistry
     string? FindClassName(Endpoint endpoint);
 
     /// <summary>
+    /// Finds the authorization scope associated with an endpoint.
+    /// </summary>
+    string? FindScope(Endpoint endpoint);
+
+    /// <summary>
     /// Number of registered endpoint entries.
     /// </summary>
     int EndpointMapCount { get; }

@@ -611,6 +611,69 @@ public class CatalogRegistryTests
 
     #endregion
 
+    #region FindScope Tests
+
+    [Fact]
+    public void FindScope_RegisteredGetEndpoint_ShouldReturnReadScope()
+    {
+        var registry = new CatalogRegistry();
+        var endpoint = CreateEndpoint(httpMethod: "GET");
+        registry.Register("GetMenu", endpoint, DefaultAggregate);
+
+        var result = registry.FindScope(endpoint);
+
+        result.Should().Be("menu:read");
+    }
+
+    [Fact]
+    public void FindScope_RegisteredPostEndpoint_ShouldReturnWriteScope()
+    {
+        var registry = new CatalogRegistry();
+        var endpoint = CreateEndpoint(httpMethod: "POST");
+        registry.Register("CreateMenu", endpoint, DefaultAggregate);
+
+        var result = registry.FindScope(endpoint);
+
+        result.Should().Be("menu:write");
+    }
+
+    [Fact]
+    public void FindScope_WithGroupRequirement_ShouldReturnGroupScope()
+    {
+        var registry = new CatalogRegistry();
+        var endpoint = CreateEndpoint(httpMethod: "GET", customGroup: "menu:deposit");
+        registry.Register("DepositMenu", endpoint, DefaultAggregate);
+
+        var result = registry.FindScope(endpoint);
+
+        result.Should().Be("menu:deposit");
+    }
+
+    [Fact]
+    public void FindScope_UnregisteredEndpoint_ShouldReturnNull()
+    {
+        var registry = new CatalogRegistry();
+        var endpoint = CreateEndpoint(httpMethod: "GET");
+
+        var result = registry.FindScope(endpoint);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public void FindScope_ExcludedEndpoint_ShouldStillReturnScope()
+    {
+        var registry = new CatalogRegistry();
+        var endpoint = CreateEndpoint(httpMethod: "GET", excludeFromDescription: true);
+        registry.Register("SwaggerRedirect", endpoint, DefaultAggregate);
+
+        var result = registry.FindScope(endpoint);
+
+        result.Should().Be("menu:read");
+    }
+
+    #endregion
+
     #region FindEndpoint Tests
 
     [Fact]
