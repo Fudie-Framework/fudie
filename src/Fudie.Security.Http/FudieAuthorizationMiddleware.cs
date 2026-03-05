@@ -174,6 +174,12 @@ public class FudieAuthorizationMiddleware(RequestDelegate next)
         if (tokenContext.IsOwner)
             claims.Add(new("owner", "true"));
 
+        if (tokenContext.SessionId is not null)
+            claims.Add(new("sid", tokenContext.SessionId.Value.ToString()));
+
+        if (tokenContext.AppId is not null)
+            claims.Add(new("app", tokenContext.AppId.Value.ToString()));
+
         context.User = new ClaimsPrincipal(new ClaimsIdentity(claims, "FudieToken"));
     }
 

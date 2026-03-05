@@ -395,6 +395,60 @@ public class FudieAuthorizationMiddlewareTests
     }
 
     [Fact]
+    public async Task InvokeAsync_WithSessionId_ShouldSetSidClaim()
+    {
+        var sessionId = Guid.NewGuid();
+        var context = CreateContext(new AuthenticatedRequirement());
+        SetupValidToken(sessionId: sessionId);
+        context.Request.Headers.Authorization = "Bearer valid-token";
+        var middleware = CreateMiddleware();
+
+        await middleware.InvokeAsync(context, _jwtValidator.Object, _catalog, _config);
+
+        context.User.FindFirst("sid")?.Value.Should().Be(sessionId.ToString());
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithAppId_ShouldSetAppClaim()
+    {
+        var appId = Guid.NewGuid();
+        var context = CreateContext(new AuthenticatedRequirement());
+        SetupValidToken(appId: appId);
+        context.Request.Headers.Authorization = "Bearer valid-token";
+        var middleware = CreateMiddleware();
+
+        await middleware.InvokeAsync(context, _jwtValidator.Object, _catalog, _config);
+
+        context.User.FindFirst("app")?.Value.Should().Be(appId.ToString());
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithNoSessionId_ShouldNotSetSidClaim()
+    {
+        var context = CreateContext(new AuthenticatedRequirement());
+        SetupValidToken();
+        context.Request.Headers.Authorization = "Bearer valid-token";
+        var middleware = CreateMiddleware();
+
+        await middleware.InvokeAsync(context, _jwtValidator.Object, _catalog, _config);
+
+        context.User.FindFirst("sid").Should().BeNull();
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithNoAppId_ShouldNotSetAppClaim()
+    {
+        var context = CreateContext(new AuthenticatedRequirement());
+        SetupValidToken();
+        context.Request.Headers.Authorization = "Bearer valid-token";
+        var middleware = CreateMiddleware();
+
+        await middleware.InvokeAsync(context, _jwtValidator.Object, _catalog, _config);
+
+        context.User.FindFirst("app").Should().BeNull();
+    }
+
+    [Fact]
     public async Task InvokeAsync_WithNoTenantId_ShouldNotSetTidClaim()
     {
         var endpoint = CreateEndpointWithDisplayName("test-endpoint");
@@ -472,13 +526,17 @@ public class FudieAuthorizationMiddlewareTests
         bool isOwner = false,
         string[]? groups = null,
         string[]? additionalScopes = null,
-        string[]? excludedScopes = null)
+        string[]? excludedScopes = null,
+        Guid? sessionId = null,
+        Guid? appId = null)
     {
         var tokenContext = new FudieTokenContext(
             UserId, tenantId, isOwner,
             groups ?? [],
             additionalScopes ?? [],
-            excludedScopes ?? []);
+            excludedScopes ?? [],
+            sessionId,
+            appId);
 
         _jwtValidator.Setup(x => x.ValidateTokenAsync(It.IsAny<string>()))
             .ReturnsAsync(tokenContext);

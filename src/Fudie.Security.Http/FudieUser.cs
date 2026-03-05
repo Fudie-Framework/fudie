@@ -22,4 +22,12 @@ public class FudieUser(IHttpContextAccessor httpContextAccessor) : IFudieUser
 
     /// <inheritdoc />
     public bool IsOwner => User?.HasClaim("owner", "true") ?? false;
+
+    /// <inheritdoc />
+    public Guid? SessionId =>
+        User?.FindFirst("sid")?.Value is { } sid && Guid.TryParse(sid, out var id) ? id : null;
+
+    /// <inheritdoc />
+    public Guid? AppId =>
+        User?.FindFirst("app")?.Value is { } app && Guid.TryParse(app, out var id) ? id : null;
 }

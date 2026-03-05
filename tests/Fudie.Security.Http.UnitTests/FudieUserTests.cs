@@ -138,6 +138,78 @@ public class FudieUserTests
         user.IsOwner.Should().BeFalse();
     }
 
+    [Fact]
+    public void SessionId_WithValidSidClaim_ShouldReturnGuid()
+    {
+        var sessionId = Guid.NewGuid();
+        var context = CreateContextWithClaims(
+            new Claim("sub", Guid.NewGuid().ToString()),
+            new Claim("sid", sessionId.ToString()));
+        var user = CreateFudieUser(context);
+        user.SessionId.Should().Be(sessionId);
+    }
+
+    [Fact]
+    public void SessionId_WithNoSidClaim_ShouldReturnNull()
+    {
+        var context = CreateAuthenticatedContext(Guid.NewGuid());
+        var user = CreateFudieUser(context);
+        user.SessionId.Should().BeNull();
+    }
+
+    [Fact]
+    public void SessionId_WithInvalidSidClaim_ShouldReturnNull()
+    {
+        var context = CreateContextWithClaims(
+            new Claim("sub", Guid.NewGuid().ToString()),
+            new Claim("sid", "not-a-guid"));
+        var user = CreateFudieUser(context);
+        user.SessionId.Should().BeNull();
+    }
+
+    [Fact]
+    public void AppId_WithValidAppClaim_ShouldReturnGuid()
+    {
+        var appId = Guid.NewGuid();
+        var context = CreateContextWithClaims(
+            new Claim("sub", Guid.NewGuid().ToString()),
+            new Claim("app", appId.ToString()));
+        var user = CreateFudieUser(context);
+        user.AppId.Should().Be(appId);
+    }
+
+    [Fact]
+    public void AppId_WithNoAppClaim_ShouldReturnNull()
+    {
+        var context = CreateAuthenticatedContext(Guid.NewGuid());
+        var user = CreateFudieUser(context);
+        user.AppId.Should().BeNull();
+    }
+
+    [Fact]
+    public void AppId_WithInvalidAppClaim_ShouldReturnNull()
+    {
+        var context = CreateContextWithClaims(
+            new Claim("sub", Guid.NewGuid().ToString()),
+            new Claim("app", "not-a-guid"));
+        var user = CreateFudieUser(context);
+        user.AppId.Should().BeNull();
+    }
+
+    [Fact]
+    public void SessionId_WithNoHttpContext_ShouldReturnNull()
+    {
+        var user = CreateFudieUser(httpContext: null);
+        user.SessionId.Should().BeNull();
+    }
+
+    [Fact]
+    public void AppId_WithNoHttpContext_ShouldReturnNull()
+    {
+        var user = CreateFudieUser(httpContext: null);
+        user.AppId.Should().BeNull();
+    }
+
     #endregion
 
     #region Identity Edge Cases
