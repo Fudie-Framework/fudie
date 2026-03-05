@@ -101,6 +101,7 @@ public class JwtValidatorTests
         var userId = Guid.NewGuid();
         var tenantId = Guid.NewGuid();
 
+        var sessionId = Guid.NewGuid();
         var claims = new Dictionary<string, object>
         {
             ["sub"] = userId.ToString(),
@@ -108,7 +109,8 @@ public class JwtValidatorTests
             ["owner"] = true,
             ["groups"] = new[] { "admin", "editor" },
             ["add"] = new[] { "extra-scope" },
-            ["exc"] = new[] { "blocked-scope" }
+            ["exc"] = new[] { "blocked-scope" },
+            ["sid"] = sessionId.ToString()
         };
 
         var token = CreateToken(key, claims);
@@ -121,6 +123,8 @@ public class JwtValidatorTests
         result.Groups.Should().BeEquivalentTo("admin", "editor");
         result.AdditionalScopes.Should().BeEquivalentTo("extra-scope");
         result.ExcludedScopes.Should().BeEquivalentTo("blocked-scope");
+        result.SessionId.Should().Be(sessionId);
+        result.AppId.Should().BeNull();
     }
 
     // --- Minimal / missing claims ---
@@ -140,6 +144,8 @@ public class JwtValidatorTests
         result.Groups.Should().BeEmpty();
         result.AdditionalScopes.Should().BeEmpty();
         result.ExcludedScopes.Should().BeEmpty();
+        result.SessionId.Should().BeNull();
+        result.AppId.Should().BeNull();
     }
 
     [Fact]
@@ -164,6 +170,46 @@ public class JwtValidatorTests
 
         result.Should().NotBeNull();
         result!.TenantId.Should().BeNull();
+    }
+
+    // --- sid / app claims ---
+
+    [Fact]
+    public async Task ValidateTokenAsync_app_claim_extracts_app_id()
+    {
+        var (validator, key) = CreateValidatorWithKey();
+        using var _ = key;
+        var appId = Guid.NewGuid();
+        var token = CreateToken(key, new Dictionary<string, object> { ["app"] = appId.ToString() });
+        var result = await validator.ValidateTokenAsync(token);
+
+        result.Should().NotBeNull();
+        result!.AppId.Should().Be(appId);
+        result.SessionId.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ValidateTokenAsync_invalid_sid_returns_null_session()
+    {
+        var (validator, key) = CreateValidatorWithKey();
+        using var _ = key;
+        var token = CreateToken(key, new Dictionary<string, object> { ["sid"] = "not-a-guid" });
+        var result = await validator.ValidateTokenAsync(token);
+
+        result.Should().NotBeNull();
+        result!.SessionId.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ValidateTokenAsync_invalid_app_returns_null_app()
+    {
+        var (validator, key) = CreateValidatorWithKey();
+        using var _ = key;
+        var token = CreateToken(key, new Dictionary<string, object> { ["app"] = "not-a-guid" });
+        var result = await validator.ValidateTokenAsync(token);
+
+        result.Should().NotBeNull();
+        result!.AppId.Should().BeNull();
     }
 
     // --- Single string claim for array fields ---

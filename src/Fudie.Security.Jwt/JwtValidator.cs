@@ -46,7 +46,9 @@ public class JwtValidator(IEnumerable<ISigningKeyProvider> keyProviders) : IJwtV
             claims.TryGetValue("owner", out var owner) && owner is true,
             ExtractStringArray(claims, "groups"),
             ExtractStringArray(claims, "add"),
-            ExtractStringArray(claims, "exc"));
+            ExtractStringArray(claims, "exc"),
+            ExtractGuid(claims, "sid"),
+            ExtractGuid(claims, "app"));
     }
 
     private static Guid? ExtractGuid(IDictionary<string, object> claims, string key)

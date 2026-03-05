@@ -16,7 +16,22 @@ public class TokenGenerator(
             : 180);
 
     /// <inheritdoc />
-    public string GenerateSessionToken(FudieTokenContext data)
+    public string GenerateUserToken(FudieTokenContext data, Guid sessionId)
+    {
+        var claims = BuildBaseClaims(data);
+        claims["sid"] = sessionId.ToString();
+        return CreateToken(claims, _sessionTokenLifetime);
+    }
+
+    /// <inheritdoc />
+    public string GenerateAppToken(FudieTokenContext data, Guid appId)
+    {
+        var claims = BuildBaseClaims(data);
+        claims["app"] = appId.ToString();
+        return CreateToken(claims, _sessionTokenLifetime);
+    }
+
+    private static Dictionary<string, object> BuildBaseClaims(FudieTokenContext data)
     {
         var claims = new Dictionary<string, object>
         {
@@ -39,7 +54,7 @@ public class TokenGenerator(
             }
         }
 
-        return CreateToken(claims, _sessionTokenLifetime);
+        return claims;
     }
 
     private string CreateToken(Dictionary<string, object> claims, TimeSpan lifetime)
