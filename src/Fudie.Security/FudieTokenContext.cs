@@ -9,10 +9,14 @@ namespace Fudie.Security;
 /// <param name="Groups">Permission groups assigned to the user.</param>
 /// <param name="AdditionalScopes">Extra scopes granted beyond group defaults.</param>
 /// <param name="ExcludedScopes">Scopes explicitly revoked from the user.</param>
+/// <param name="SessionId">Session identifier for user tokens, or <c>null</c> for app tokens.</param>
+/// <param name="AppId">External application identifier for API key tokens, or <c>null</c> for user tokens.</param>
 public record FudieTokenContext(
     Guid UserId,
     Guid? TenantId,
     bool IsOwner,
     string[] Groups,
     string[] AdditionalScopes,
-    string[] ExcludedScopes);
+    string[] ExcludedScopes,
+    Guid? SessionId = null,
+    Guid? AppId = null);

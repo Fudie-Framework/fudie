@@ -37,4 +37,33 @@ public class FudieTokenContextTests
         context.IsOwner.Should().BeTrue();
     }
 
+    [Fact]
+    public void ShouldSupportSessionId()
+    {
+        var sessionId = Guid.NewGuid();
+        var context = new FudieTokenContext(Guid.NewGuid(), null, false, [], [], [], sessionId);
+
+        context.SessionId.Should().Be(sessionId);
+        context.AppId.Should().BeNull();
+    }
+
+    [Fact]
+    public void ShouldSupportAppId()
+    {
+        var appId = Guid.NewGuid();
+        var context = new FudieTokenContext(Guid.NewGuid(), null, false, [], [], [], AppId: appId);
+
+        context.AppId.Should().Be(appId);
+        context.SessionId.Should().BeNull();
+    }
+
+    [Fact]
+    public void ShouldDefaultSessionIdAndAppIdToNull()
+    {
+        var context = new FudieTokenContext(Guid.NewGuid(), null, false, [], [], []);
+
+        context.SessionId.Should().BeNull();
+        context.AppId.Should().BeNull();
+    }
+
 }

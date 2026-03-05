@@ -11,10 +11,10 @@ public class IFudieUserTests
     }
 
     [Fact]
-    public void IFudieUser_ShouldDeclareExactlyFourProperties()
+    public void IFudieUser_ShouldDeclareExactlySixProperties()
     {
         Type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-            .Should().HaveCount(4);
+            .Should().HaveCount(6);
     }
 
     [Fact]
@@ -62,6 +62,26 @@ public class IFudieUserTests
 
         property.Should().NotBeNull();
         property!.PropertyType.Should().Be(typeof(bool));
+        property.CanRead.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IFudieUser_ShouldDeclareSessionIdProperty()
+    {
+        var property = Type.GetProperty("SessionId");
+
+        property.Should().NotBeNull();
+        property!.PropertyType.Should().Be(typeof(Guid?));
+        property.CanRead.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IFudieUser_ShouldDeclareAppIdProperty()
+    {
+        var property = Type.GetProperty("AppId");
+
+        property.Should().NotBeNull();
+        property!.PropertyType.Should().Be(typeof(Guid?));
         property.CanRead.Should().BeTrue();
     }
 }

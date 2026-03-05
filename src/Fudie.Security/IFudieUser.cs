@@ -24,4 +24,14 @@ public interface IFudieUser
     /// Whether the user has been successfully authenticated.
     /// </summary>
     bool IsAuthenticated { get; }
+
+    /// <summary>
+    /// Session identifier for user tokens, or <c>null</c> for app tokens.
+    /// </summary>
+    Guid? SessionId { get; }
+
+    /// <summary>
+    /// External application identifier for API key tokens, or <c>null</c> for user tokens.
+    /// </summary>
+    Guid? AppId { get; }
 }

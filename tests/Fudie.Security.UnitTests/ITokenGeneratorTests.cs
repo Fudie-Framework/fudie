@@ -18,22 +18,36 @@ public class ITokenGeneratorTests
     }
 
     [Fact]
-    public void ITokenGenerator_ShouldDeclareExactlyOneMethod()
+    public void ITokenGenerator_ShouldDeclareExactlyTwoMethods()
     {
         var methods = Type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
             .Where(m => !m.IsSpecialName).ToArray();
-        methods.Should().HaveCount(1);
+        methods.Should().HaveCount(2);
     }
 
     [Fact]
-    public void ITokenGenerator_ShouldDeclareGenerateSessionToken()
+    public void ITokenGenerator_ShouldDeclareGenerateUserToken()
     {
-        var method = Type.GetMethod("GenerateSessionToken");
+        var method = Type.GetMethod("GenerateUserToken");
 
         method.Should().NotBeNull();
         method!.ReturnType.Should().Be(typeof(string));
         var parameters = method.GetParameters();
-        parameters.Should().HaveCount(1);
+        parameters.Should().HaveCount(2);
         parameters[0].ParameterType.Should().Be(typeof(FudieTokenContext));
+        parameters[1].ParameterType.Should().Be(typeof(Guid));
+    }
+
+    [Fact]
+    public void ITokenGenerator_ShouldDeclareGenerateAppToken()
+    {
+        var method = Type.GetMethod("GenerateAppToken");
+
+        method.Should().NotBeNull();
+        method!.ReturnType.Should().Be(typeof(string));
+        var parameters = method.GetParameters();
+        parameters.Should().HaveCount(2);
+        parameters[0].ParameterType.Should().Be(typeof(FudieTokenContext));
+        parameters[1].ParameterType.Should().Be(typeof(Guid));
     }
 }
