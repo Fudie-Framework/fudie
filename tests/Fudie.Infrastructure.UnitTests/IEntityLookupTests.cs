@@ -158,7 +158,8 @@ public class IEntityLookupTests : IDisposable
         _context.ChangeTracker.Clear();
 
         IEntityLookup lookup = _context;
-        var result = await lookup.GetRequiredAsync<TestEntity, Guid>(id);
+        Guid? nullableId = id;
+        var result = await lookup.GetRequiredAsync<TestEntity, Guid>(nullableId);
 
         result.Should().NotBeNull();
         result!.Name.Should().Be("Optional");
@@ -168,8 +169,9 @@ public class IEntityLookupTests : IDisposable
     public async Task GetRequiredAsync_NullableOverload_WithNonExistentId_ShouldThrowKeyNotFoundException()
     {
         IEntityLookup lookup = _context;
+        Guid? nullableId = Guid.NewGuid();
 
-        var act = () => lookup.GetRequiredAsync<TestEntity, Guid>(Guid.NewGuid());
+        var act = () => lookup.GetRequiredAsync<TestEntity, Guid>(nullableId);
 
         await act.Should().ThrowAsync<KeyNotFoundException>();
     }
@@ -183,7 +185,8 @@ public class IEntityLookupTests : IDisposable
         _context.ChangeTracker.Clear();
 
         IEntityLookup lookup = _context;
-        var result = await lookup.GetRequiredAsync<TestEntity, Guid>(id, tracking: false);
+        Guid? nullableId = id;
+        var result = await lookup.GetRequiredAsync<TestEntity, Guid>(nullableId, tracking: false);
 
         result.Should().NotBeNull();
         _context.Entry(result!).State.Should().Be(EntityState.Detached);
@@ -198,7 +201,8 @@ public class IEntityLookupTests : IDisposable
         _context.ChangeTracker.Clear();
 
         IEntityLookup lookup = _context;
-        var result = await lookup.GetRequiredAsync<TestEntity, Guid>(id, tracking: true);
+        Guid? nullableId = id;
+        var result = await lookup.GetRequiredAsync<TestEntity, Guid>(nullableId, tracking: true);
 
         result.Should().NotBeNull();
         _context.Entry(result!).State.Should().Be(EntityState.Unchanged);
