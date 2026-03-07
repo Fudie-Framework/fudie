@@ -137,4 +137,70 @@ public class IEntityLookupTests : IDisposable
 
         result.Should().NotBeNull();
     }
+
+    [Fact]
+    public async Task GetOptionalAsync_WithNullId_ShouldReturnNull()
+    {
+        IEntityLookup lookup = _context;
+        Guid? nullId = null;
+
+        var result = await lookup.GetOptionalAsync<TestEntity, Guid>(nullId);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetOptionalAsync_WithExistingId_ShouldReturnEntity()
+    {
+        var id = Guid.NewGuid();
+        _context.TestEntities.Add(new TestEntity(id) { Name = "Optional" });
+        await _context.SaveChangesAsync();
+        _context.ChangeTracker.Clear();
+
+        IEntityLookup lookup = _context;
+        var result = await lookup.GetOptionalAsync<TestEntity, Guid>(id);
+
+        result.Should().NotBeNull();
+        result!.Name.Should().Be("Optional");
+    }
+
+    [Fact]
+    public async Task GetOptionalAsync_WithNonExistentId_ShouldThrowKeyNotFoundException()
+    {
+        IEntityLookup lookup = _context;
+
+        var act = () => lookup.GetOptionalAsync<TestEntity, Guid>(Guid.NewGuid());
+
+        await act.Should().ThrowAsync<KeyNotFoundException>();
+    }
+
+    [Fact]
+    public async Task GetOptionalAsync_WithTrackingFalse_ShouldReturnDetachedEntity()
+    {
+        var id = Guid.NewGuid();
+        _context.TestEntities.Add(new TestEntity(id) { Name = "OptUntracked" });
+        await _context.SaveChangesAsync();
+        _context.ChangeTracker.Clear();
+
+        IEntityLookup lookup = _context;
+        var result = await lookup.GetOptionalAsync<TestEntity, Guid>(id, tracking: false);
+
+        result.Should().NotBeNull();
+        _context.Entry(result!).State.Should().Be(EntityState.Detached);
+    }
+
+    [Fact]
+    public async Task GetOptionalAsync_WithTrackingTrue_ShouldReturnTrackedEntity()
+    {
+        var id = Guid.NewGuid();
+        _context.TestEntities.Add(new TestEntity(id) { Name = "OptTracked" });
+        await _context.SaveChangesAsync();
+        _context.ChangeTracker.Clear();
+
+        IEntityLookup lookup = _context;
+        var result = await lookup.GetOptionalAsync<TestEntity, Guid>(id, tracking: true);
+
+        result.Should().NotBeNull();
+        _context.Entry(result!).State.Should().Be(EntityState.Unchanged);
+    }
 }

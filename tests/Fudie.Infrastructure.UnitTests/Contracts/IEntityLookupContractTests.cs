@@ -11,10 +11,10 @@ public class IEntityLookupContractTests
     }
 
     [Fact]
-    public void IEntityLookup_ShouldDeclareExactlyTwoMethods()
+    public void IEntityLookup_ShouldDeclareExactlyThreeMethods()
     {
         var methods = Type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-        methods.Should().HaveCount(2);
+        methods.Should().HaveCount(3);
     }
 
     [Fact]
@@ -43,5 +43,19 @@ public class IEntityLookupContractTests
         method.GetParameters()[1].Name.Should().Be("tracking");
         method.GetParameters()[2].Name.Should().Be("cancellationToken");
         method.GetParameters()[3].Name.Should().Be("includeProperties");
+    }
+
+    [Fact]
+    public void IEntityLookup_ShouldDeclareGetOptionalAsyncMethod()
+    {
+        var method = Type.GetMethod("GetOptionalAsync");
+
+        method.Should().NotBeNull();
+        method!.IsGenericMethod.Should().BeTrue();
+        method.GetGenericArguments().Should().HaveCount(2);
+        method.ReturnType.GetGenericTypeDefinition().Should().Be(typeof(Task<>));
+        method.GetParameters().Should().HaveCount(2);
+        method.GetParameters()[0].Name.Should().Be("id");
+        method.GetParameters()[1].Name.Should().Be("tracking");
     }
 }

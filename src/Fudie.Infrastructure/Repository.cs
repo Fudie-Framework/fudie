@@ -94,10 +94,21 @@ public interface IEntityLookup
         
         var entity = await query.FirstOrDefaultAsync(e => e.Id!.Equals(id), cancellationToken);    
         return entity ?? throw new KeyNotFoundException($"{typeof(T).Name} with ID '{id}' not found.");
-        
-        
+
+
+    }
+
+    async Task<TEntity?> GetOptionalAsync<TEntity, TId>(
+        TId? id,
+        bool tracking = false)
+        where TEntity : class, IEntity<TId>
+        where TId : struct
+    {
+        if (id is null) return null;
+        return await GetRequiredAsync<TEntity, TId>(id.Value, tracking);
     }
 }
+
 
 /// <summary>
 /// Defines a contract for managing database transactions and persisting changes.
