@@ -30,32 +30,33 @@ public class IEntityLookupContractTests
     }
 
     [Fact]
-    public void IEntityLookup_ShouldDeclareGetRequiredAsyncMethod()
+    public void IEntityLookup_ShouldDeclareTwoGetRequiredAsyncOverloads()
     {
-        var method = Type.GetMethod("GetRequiredAsync");
+        var methods = Type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+            .Where(m => m.Name == "GetRequiredAsync")
+            .OrderBy(m => m.GetParameters().Length)
+            .ToArray();
 
-        method.Should().NotBeNull();
-        method!.IsGenericMethod.Should().BeTrue();
-        method.GetGenericArguments().Should().HaveCount(2);
-        method.ReturnType.GetGenericTypeDefinition().Should().Be(typeof(Task<>));
-        method.GetParameters().Should().HaveCount(4);
-        method.GetParameters()[0].Name.Should().Be("id");
-        method.GetParameters()[1].Name.Should().Be("tracking");
-        method.GetParameters()[2].Name.Should().Be("cancellationToken");
-        method.GetParameters()[3].Name.Should().Be("includeProperties");
-    }
+        methods.Should().HaveCount(2);
 
-    [Fact]
-    public void IEntityLookup_ShouldDeclareGetOptionalAsyncMethod()
-    {
-        var method = Type.GetMethod("GetOptionalAsync");
+        // Nullable overload (2 params)
+        var nullable = methods[0];
+        nullable.IsGenericMethod.Should().BeTrue();
+        nullable.GetGenericArguments().Should().HaveCount(2);
+        nullable.ReturnType.GetGenericTypeDefinition().Should().Be(typeof(Task<>));
+        nullable.GetParameters().Should().HaveCount(2);
+        nullable.GetParameters()[0].Name.Should().Be("id");
+        nullable.GetParameters()[1].Name.Should().Be("tracking");
 
-        method.Should().NotBeNull();
-        method!.IsGenericMethod.Should().BeTrue();
-        method.GetGenericArguments().Should().HaveCount(2);
-        method.ReturnType.GetGenericTypeDefinition().Should().Be(typeof(Task<>));
-        method.GetParameters().Should().HaveCount(2);
-        method.GetParameters()[0].Name.Should().Be("id");
-        method.GetParameters()[1].Name.Should().Be("tracking");
+        // Full overload (4 params)
+        var full = methods[1];
+        full.IsGenericMethod.Should().BeTrue();
+        full.GetGenericArguments().Should().HaveCount(2);
+        full.ReturnType.GetGenericTypeDefinition().Should().Be(typeof(Task<>));
+        full.GetParameters().Should().HaveCount(4);
+        full.GetParameters()[0].Name.Should().Be("id");
+        full.GetParameters()[1].Name.Should().Be("tracking");
+        full.GetParameters()[2].Name.Should().Be("cancellationToken");
+        full.GetParameters()[3].Name.Should().Be("includeProperties");
     }
 }

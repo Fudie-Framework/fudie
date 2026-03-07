@@ -98,7 +98,7 @@ public interface IEntityLookup
 
     }
 
-    async Task<TEntity?> GetOptionalAsync<TEntity, TId>(
+    async Task<TEntity?> GetRequiredAsync<TEntity, TId>(
         TId? id,
         bool tracking = false)
         where TEntity : class, IEntity<TId>
