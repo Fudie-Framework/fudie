@@ -1,34 +1,34 @@
 namespace Fudie.Security.Http.UnitTests;
 
-public class FudieUserTests
+public class FudieContextTests
 {
     #region No HttpContext
 
     [Fact]
     public void IsAuthenticated_WithNoHttpContext_ShouldReturnFalse()
     {
-        var user = CreateFudieUser(httpContext: null);
+        var user = CreateFudieContext(httpContext: null);
         user.IsAuthenticated.Should().BeFalse();
     }
 
     [Fact]
     public void UserId_WithNoHttpContext_ShouldReturnNull()
     {
-        var user = CreateFudieUser(httpContext: null);
+        var user = CreateFudieContext(httpContext: null);
         user.UserId.Should().BeNull();
     }
 
     [Fact]
     public void TenantId_WithNoHttpContext_ShouldReturnNull()
     {
-        var user = CreateFudieUser(httpContext: null);
+        var user = CreateFudieContext(httpContext: null);
         user.TenantId.Should().BeNull();
     }
 
     [Fact]
     public void IsOwner_WithNoHttpContext_ShouldReturnFalse()
     {
-        var user = CreateFudieUser(httpContext: null);
+        var user = CreateFudieContext(httpContext: null);
         user.IsOwner.Should().BeFalse();
     }
 
@@ -40,7 +40,7 @@ public class FudieUserTests
     public void IsAuthenticated_WithAnonymousUser_ShouldReturnFalse()
     {
         var context = new DefaultHttpContext();
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.IsAuthenticated.Should().BeFalse();
     }
 
@@ -48,7 +48,7 @@ public class FudieUserTests
     public void UserId_WithAnonymousUser_ShouldReturnNull()
     {
         var context = new DefaultHttpContext();
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.UserId.Should().BeNull();
     }
 
@@ -60,7 +60,7 @@ public class FudieUserTests
     public void IsAuthenticated_WithAuthenticatedUser_ShouldReturnTrue()
     {
         var context = CreateAuthenticatedContext(Guid.NewGuid());
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.IsAuthenticated.Should().BeTrue();
     }
 
@@ -69,7 +69,7 @@ public class FudieUserTests
     {
         var userId = Guid.NewGuid();
         var context = CreateAuthenticatedContext(userId);
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.UserId.Should().Be(userId);
     }
 
@@ -77,7 +77,7 @@ public class FudieUserTests
     public void UserId_WithInvalidSubClaim_ShouldReturnNull()
     {
         var context = CreateContextWithClaims(new Claim("sub", "not-a-guid"));
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.UserId.Should().BeNull();
     }
 
@@ -88,7 +88,7 @@ public class FudieUserTests
         var context = CreateContextWithClaims(
             new Claim("sub", Guid.NewGuid().ToString()),
             new Claim("tid", tenantId.ToString()));
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.TenantId.Should().Be(tenantId);
     }
 
@@ -96,7 +96,7 @@ public class FudieUserTests
     public void TenantId_WithNoTidClaim_ShouldReturnNull()
     {
         var context = CreateAuthenticatedContext(Guid.NewGuid());
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.TenantId.Should().BeNull();
     }
 
@@ -106,7 +106,7 @@ public class FudieUserTests
         var context = CreateContextWithClaims(
             new Claim("sub", Guid.NewGuid().ToString()),
             new Claim("tid", "not-a-guid"));
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.TenantId.Should().BeNull();
     }
 
@@ -116,7 +116,7 @@ public class FudieUserTests
         var context = CreateContextWithClaims(
             new Claim("sub", Guid.NewGuid().ToString()),
             new Claim("owner", "true"));
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.IsOwner.Should().BeTrue();
     }
 
@@ -124,7 +124,7 @@ public class FudieUserTests
     public void IsOwner_WithoutOwnerClaim_ShouldReturnFalse()
     {
         var context = CreateAuthenticatedContext(Guid.NewGuid());
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.IsOwner.Should().BeFalse();
     }
 
@@ -134,7 +134,7 @@ public class FudieUserTests
         var context = CreateContextWithClaims(
             new Claim("sub", Guid.NewGuid().ToString()),
             new Claim("owner", "false"));
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.IsOwner.Should().BeFalse();
     }
 
@@ -145,7 +145,7 @@ public class FudieUserTests
         var context = CreateContextWithClaims(
             new Claim("sub", Guid.NewGuid().ToString()),
             new Claim("sid", sessionId.ToString()));
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.SessionId.Should().Be(sessionId);
     }
 
@@ -153,7 +153,7 @@ public class FudieUserTests
     public void SessionId_WithNoSidClaim_ShouldReturnNull()
     {
         var context = CreateAuthenticatedContext(Guid.NewGuid());
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.SessionId.Should().BeNull();
     }
 
@@ -163,7 +163,7 @@ public class FudieUserTests
         var context = CreateContextWithClaims(
             new Claim("sub", Guid.NewGuid().ToString()),
             new Claim("sid", "not-a-guid"));
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.SessionId.Should().BeNull();
     }
 
@@ -174,7 +174,7 @@ public class FudieUserTests
         var context = CreateContextWithClaims(
             new Claim("sub", Guid.NewGuid().ToString()),
             new Claim("app", appId.ToString()));
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.AppId.Should().Be(appId);
     }
 
@@ -182,7 +182,7 @@ public class FudieUserTests
     public void AppId_WithNoAppClaim_ShouldReturnNull()
     {
         var context = CreateAuthenticatedContext(Guid.NewGuid());
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.AppId.Should().BeNull();
     }
 
@@ -192,21 +192,21 @@ public class FudieUserTests
         var context = CreateContextWithClaims(
             new Claim("sub", Guid.NewGuid().ToString()),
             new Claim("app", "not-a-guid"));
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.AppId.Should().BeNull();
     }
 
     [Fact]
     public void SessionId_WithNoHttpContext_ShouldReturnNull()
     {
-        var user = CreateFudieUser(httpContext: null);
+        var user = CreateFudieContext(httpContext: null);
         user.SessionId.Should().BeNull();
     }
 
     [Fact]
     public void AppId_WithNoHttpContext_ShouldReturnNull()
     {
-        var user = CreateFudieUser(httpContext: null);
+        var user = CreateFudieContext(httpContext: null);
         user.AppId.Should().BeNull();
     }
 
@@ -219,29 +219,29 @@ public class FudieUserTests
     {
         var context = new DefaultHttpContext();
         context.User = new ClaimsPrincipal();
-        var user = CreateFudieUser(context);
+        var user = CreateFudieContext(context);
         user.IsAuthenticated.Should().BeFalse();
     }
 
     #endregion
 
-    #region IFudieUser Contract
+    #region IFudieContext Contract
 
     [Fact]
-    public void FudieUser_ShouldImplementIFudieUser()
+    public void FudieContext_ShouldImplementIFudieContext()
     {
-        typeof(FudieUser).Should().BeAssignableTo<IFudieUser>();
+        typeof(FudieContext).Should().BeAssignableTo<IFudieContext>();
     }
 
     #endregion
 
     #region Helpers
 
-    private static FudieUser CreateFudieUser(HttpContext? httpContext)
+    private static FudieContext CreateFudieContext(HttpContext? httpContext)
     {
         var accessor = new Mock<IHttpContextAccessor>();
         accessor.Setup(x => x.HttpContext).Returns(httpContext);
-        return new FudieUser(accessor.Object);
+        return new FudieContext(accessor.Object);
     }
 
     private static HttpContext CreateAuthenticatedContext(Guid userId)

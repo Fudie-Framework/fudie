@@ -66,7 +66,7 @@ app.MapGet("/health", HealthCheck)
 
 | Type | Description |
 |------|-------------|
-| `FudieUser` | Scoped service extracting user info from HTTP context claims |
+| `FudieContext` | Scoped service extracting user info from HTTP context claims |
 | `FudieAuthorizationMiddleware` | Middleware enforcing authorization rules |
 | `FudieAuthorizationExtensions` | `UseFudieAuthorization()` extension method |
 | `CatalogRegistry` | Singleton storing registered endpoint entries |

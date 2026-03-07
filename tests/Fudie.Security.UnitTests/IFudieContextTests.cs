@@ -1,24 +1,24 @@
 namespace Fudie.Security.UnitTests;
 
-public class IFudieUserTests
+public class IFudieContextTests
 {
-    private static readonly Type Type = typeof(IFudieUser);
+    private static readonly Type Type = typeof(IFudieContext);
 
     [Fact]
-    public void IFudieUser_ShouldBeAnInterface()
+    public void IFudieContext_ShouldBeAnInterface()
     {
         Type.IsInterface.Should().BeTrue();
     }
 
     [Fact]
-    public void IFudieUser_ShouldDeclareExactlySixProperties()
+    public void IFudieContext_ShouldDeclareExactlySixProperties()
     {
         Type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
             .Should().HaveCount(6);
     }
 
     [Fact]
-    public void IFudieUser_ShouldDeclareExactlyZeroMethods()
+    public void IFudieContext_ShouldDeclareExactlyZeroMethods()
     {
         var methods = Type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
             .Where(m => !m.IsSpecialName).ToArray();
@@ -26,7 +26,7 @@ public class IFudieUserTests
     }
 
     [Fact]
-    public void IFudieUser_ShouldDeclareUserIdProperty()
+    public void IFudieContext_ShouldDeclareUserIdProperty()
     {
         var property = Type.GetProperty("UserId");
 
@@ -36,7 +36,7 @@ public class IFudieUserTests
     }
 
     [Fact]
-    public void IFudieUser_ShouldDeclareTenantIdProperty()
+    public void IFudieContext_ShouldDeclareTenantIdProperty()
     {
         var property = Type.GetProperty("TenantId");
 
@@ -46,7 +46,7 @@ public class IFudieUserTests
     }
 
     [Fact]
-    public void IFudieUser_ShouldDeclareIsOwnerProperty()
+    public void IFudieContext_ShouldDeclareIsOwnerProperty()
     {
         var property = Type.GetProperty("IsOwner");
 
@@ -56,7 +56,7 @@ public class IFudieUserTests
     }
 
     [Fact]
-    public void IFudieUser_ShouldDeclareIsAuthenticatedProperty()
+    public void IFudieContext_ShouldDeclareIsAuthenticatedProperty()
     {
         var property = Type.GetProperty("IsAuthenticated");
 
@@ -66,7 +66,7 @@ public class IFudieUserTests
     }
 
     [Fact]
-    public void IFudieUser_ShouldDeclareSessionIdProperty()
+    public void IFudieContext_ShouldDeclareSessionIdProperty()
     {
         var property = Type.GetProperty("SessionId");
 
@@ -76,7 +76,7 @@ public class IFudieUserTests
     }
 
     [Fact]
-    public void IFudieUser_ShouldDeclareAppIdProperty()
+    public void IFudieContext_ShouldDeclareAppIdProperty()
     {
         var property = Type.GetProperty("AppId");
 

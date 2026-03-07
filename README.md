@@ -27,7 +27,7 @@ Modular .NET 8 framework for building microservices. Each package is independent
 
 | Package | Description |
 |---|---|
-| [Fudie.Security](src/Fudie.Security/) | Core security contracts (`IPasswordHasher`, `IApiKeyGenerator`, `IFudieUser`, `ITokenGenerator`, `IJwtValidator`) and implementations (`BcryptPasswordHasher`, `ApiKeyGenerator`). |
+| [Fudie.Security](src/Fudie.Security/) | Core security contracts (`IPasswordHasher`, `IApiKeyGenerator`, `IFudieContext`, `ITokenGenerator`, `IJwtValidator`) and implementations (`BcryptPasswordHasher`, `ApiKeyGenerator`). |
 | [Fudie.Security.Jwt](src/Fudie.Security.Jwt/) | JWT token generation and validation using ECDSA keys. |
 | [Fudie.Security.Extensions](src/Fudie.Security.Extensions/) | JWKS key fetching with in-memory caching for distributed identity scenarios. |
 | [Fudie.Security.Http](src/Fudie.Security.Http/) | Authorization middleware, endpoint catalog discovery, and security requirements for HTTP APIs. |

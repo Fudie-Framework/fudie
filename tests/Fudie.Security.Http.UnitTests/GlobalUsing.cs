@@ -1,4 +1,5 @@
 global using FluentAssertions;
+global using Fudie.Domain;
 global using Fudie.Http;
 global using Fudie.Security;
 global using Fudie.Security.Http;

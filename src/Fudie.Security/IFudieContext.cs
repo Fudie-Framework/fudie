@@ -3,7 +3,7 @@ namespace Fudie.Security;
 /// <summary>
 /// Represents the authenticated user in the current HTTP request scope.
 /// </summary>
-public interface IFudieUser
+public interface IFudieContext
 {
     /// <summary>
     /// Authenticated user identifier, or <c>null</c> if not authenticated.

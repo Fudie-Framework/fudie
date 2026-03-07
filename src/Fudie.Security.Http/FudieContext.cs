@@ -1,11 +1,11 @@
 namespace Fudie.Security.Http;
 
 /// <summary>
-/// Scoped implementation of <see cref="IFudieUser"/> that extracts user information
+/// Scoped implementation of <see cref="IFudieContext"/> that extracts user information
 /// from the current HTTP context claims principal.
 /// </summary>
 [Injectable]
-public class FudieUser(IHttpContextAccessor httpContextAccessor) : IFudieUser
+public class FudieContext(IHttpContextAccessor httpContextAccessor) : IFudieContext
 {
     private ClaimsPrincipal? User => httpContextAccessor.HttpContext?.User;
 

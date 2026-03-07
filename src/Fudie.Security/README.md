@@ -6,7 +6,7 @@ Security infrastructure for Fudie microservices. Split into four packages with c
 
 | Package | Purpose |
 |---|---|
-| **Fudie.Security** | Core contracts (`IPasswordHasher`, `IApiKeyGenerator`, `IFudieUser`, `ITokenGenerator`, `IJwtValidator`) and implementations (`BcryptPasswordHasher`, `ApiKeyGenerator`) |
+| **Fudie.Security** | Core contracts (`IPasswordHasher`, `IApiKeyGenerator`, `IFudieContext`, `ITokenGenerator`, `IJwtValidator`) and implementations (`BcryptPasswordHasher`, `ApiKeyGenerator`) |
 | **Fudie.Security.Jwt** | JWT token generation and validation (`JwtValidator`, `ISigningKeyProvider`) |
 | **Fudie.Security.Extensions** | JWKS key fetching with in-memory caching |
 | **Fudie.Security.Http** | Authorization middleware, endpoint catalog, and security requirements for HTTP APIs |
