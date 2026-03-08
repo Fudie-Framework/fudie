@@ -31,11 +31,13 @@ public class GlobalExceptionHandler : IExceptionHandler
 
         switch (exception)
         {
-            case UnauthorizedException:
+            case UnauthorizedException unauthorizedException:
                 problemDetails.Status = StatusCodes.Status401Unauthorized;
                 problemDetails.Title = "Unauthorized";
                 problemDetails.Detail = exception.Message;
                 problemDetails.Type = "https://tools.ietf.org/html/rfc7235#section-3.1";
+                if (unauthorizedException.ErrorCode is not null)
+                    problemDetails.Extensions["errorCode"] = unauthorizedException.ErrorCode;
                 break;
 
             case KeyNotFoundException:
@@ -45,11 +47,13 @@ public class GlobalExceptionHandler : IExceptionHandler
                 problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4";
                 break;
 
-            case ConflictException:
+            case ConflictException conflictException:
                 problemDetails.Status = StatusCodes.Status409Conflict;
                 problemDetails.Title = "Conflict";
                 problemDetails.Detail = exception.Message;
                 problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.8";
+                if (conflictException.ErrorCode is not null)
+                    problemDetails.Extensions["errorCode"] = conflictException.ErrorCode;
                 break;
 
             case ValidationException validationException:
@@ -62,7 +66,7 @@ public class GlobalExceptionHandler : IExceptionHandler
                     .GroupBy(e => e.PropertyName)
                     .ToDictionary(
                         g => g.Key,
-                        g => g.Select(e => e.ErrorMessage).ToArray()
+                        g => g.Select(e => new { code = e.ErrorCode, message = e.ErrorMessage }).ToArray()
                     );
 
                 problemDetails.Extensions["errors"] = errors;

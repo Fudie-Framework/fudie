@@ -6,7 +6,7 @@ HTTP/ASP.NET Core infrastructure for exception handling, feature endpoint mappin
 
 ### Global Exception Handler
 
-Maps domain exceptions to RFC 7807 problem details responses:
+Maps domain exceptions to RFC 7807 problem details responses. Includes `errorCode` in the response when available for traceability:
 
 | Exception | HTTP Status |
 |-----------|-------------|
@@ -37,7 +37,26 @@ RFC 7807 compliant error DTO:
   "title": "Validation Error",
   "status": 422,
   "detail": "One or more validation errors occurred.",
-  "errors": { "Name": ["Name is required"] }
+  "extensions": {
+    "traceId": "...",
+    "errors": {
+      "Name": [{ "code": "Customer.Name.Required", "message": "Name is required" }]
+    }
+  }
+}
+```
+
+For `ConflictException` and `UnauthorizedException` with an `ErrorCode`:
+
+```json
+{
+  "title": "Conflict",
+  "status": 409,
+  "detail": "Slug already taken",
+  "extensions": {
+    "traceId": "...",
+    "errorCode": "Customer.Slug.AlreadyExists"
+  }
 }
 ```
 

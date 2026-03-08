@@ -65,6 +65,38 @@ public class GlobalExceptionHandlerTests
         root.GetProperty("instance").GetString().Should().Be("/api/test");
     }
 
+    [Fact]
+    public async Task TryHandleAsync_WithUnauthorizedException_WithErrorCode_ShouldIncludeErrorCode()
+    {
+        // Arrange
+        var context = CreateHttpContext();
+        var exception = new UnauthorizedException("Not the owner", "Order.Owner.NotOwner");
+
+        // Act
+        await _handler.TryHandleAsync(context, exception, CancellationToken.None);
+
+        // Assert
+        var jsonDoc = await GetResponseBody(context);
+        var extensions = jsonDoc.RootElement.GetProperty("extensions");
+        extensions.GetProperty("errorCode").GetString().Should().Be("Order.Owner.NotOwner");
+    }
+
+    [Fact]
+    public async Task TryHandleAsync_WithUnauthorizedException_WithoutErrorCode_ShouldNotIncludeErrorCode()
+    {
+        // Arrange
+        var context = CreateHttpContext();
+        var exception = new UnauthorizedException("Session expired");
+
+        // Act
+        await _handler.TryHandleAsync(context, exception, CancellationToken.None);
+
+        // Assert
+        var jsonDoc = await GetResponseBody(context);
+        var extensions = jsonDoc.RootElement.GetProperty("extensions");
+        extensions.TryGetProperty("errorCode", out _).Should().BeFalse();
+    }
+
     #endregion
 
     #region KeyNotFoundException Tests
@@ -160,6 +192,38 @@ public class GlobalExceptionHandlerTests
         root.GetProperty("detail").GetString().Should().Be(exceptionMessage);
         root.GetProperty("type").GetString().Should().Be("https://tools.ietf.org/html/rfc7231#section-6.5.8");
         root.GetProperty("instance").GetString().Should().Be("/api/test");
+    }
+
+    [Fact]
+    public async Task TryHandleAsync_WithConflictException_WithErrorCode_ShouldIncludeErrorCode()
+    {
+        // Arrange
+        var context = CreateHttpContext();
+        var exception = new ConflictException("Slug already taken", "Customer.Slug.AlreadyExists");
+
+        // Act
+        await _handler.TryHandleAsync(context, exception, CancellationToken.None);
+
+        // Assert
+        var jsonDoc = await GetResponseBody(context);
+        var extensions = jsonDoc.RootElement.GetProperty("extensions");
+        extensions.GetProperty("errorCode").GetString().Should().Be("Customer.Slug.AlreadyExists");
+    }
+
+    [Fact]
+    public async Task TryHandleAsync_WithConflictException_WithoutErrorCode_ShouldNotIncludeErrorCode()
+    {
+        // Arrange
+        var context = CreateHttpContext();
+        var exception = new ConflictException("Resource already exists");
+
+        // Act
+        await _handler.TryHandleAsync(context, exception, CancellationToken.None);
+
+        // Assert
+        var jsonDoc = await GetResponseBody(context);
+        var extensions = jsonDoc.RootElement.GetProperty("extensions");
+        extensions.TryGetProperty("errorCode", out _).Should().BeFalse();
     }
 
     #endregion
@@ -259,6 +323,52 @@ public class GlobalExceptionHandlerTests
         var passwordErrors = errors.GetProperty("Password");
 
         passwordErrors.GetArrayLength().Should().Be(3);
+    }
+
+    [Fact]
+    public async Task TryHandleAsync_WithValidationException_ShouldIncludeCodeAndMessageInErrors()
+    {
+        // Arrange
+        var context = CreateHttpContext();
+        var failure = new ValidationFailure("Name", "Name is required")
+        {
+            ErrorCode = "Customer.Name.Required"
+        };
+        var exception = new ValidationException([failure]);
+
+        // Act
+        await _handler.TryHandleAsync(context, exception, CancellationToken.None);
+
+        // Assert
+        var jsonDoc = await GetResponseBody(context);
+        var extensions = jsonDoc.RootElement.GetProperty("extensions");
+        var errors = extensions.GetProperty("errors");
+        var nameErrors = errors.GetProperty("Name");
+        var firstError = nameErrors[0];
+
+        firstError.GetProperty("code").GetString().Should().Be("Customer.Name.Required");
+        firstError.GetProperty("message").GetString().Should().Be("Name is required");
+    }
+
+    [Fact]
+    public async Task TryHandleAsync_WithValidationException_WithoutExplicitCode_ShouldIncludeNullCode()
+    {
+        // Arrange
+        var context = CreateHttpContext();
+        var failure = new ValidationFailure("Email", "Email is invalid");
+        var exception = new ValidationException([failure]);
+
+        // Act
+        await _handler.TryHandleAsync(context, exception, CancellationToken.None);
+
+        // Assert
+        var jsonDoc = await GetResponseBody(context);
+        var extensions = jsonDoc.RootElement.GetProperty("extensions");
+        var errors = extensions.GetProperty("errors");
+        var firstError = errors.GetProperty("Email")[0];
+
+        firstError.GetProperty("message").GetString().Should().Be("Email is invalid");
+        firstError.GetProperty("code").ValueKind.Should().Be(JsonValueKind.Null);
     }
 
     #endregion
