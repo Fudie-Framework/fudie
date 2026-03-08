@@ -16,5 +16,16 @@ public static class ConflictGuard
         if (condition)
             throw new ConflictException(message);
     }
+
+    /// <summary>
+    /// Throws a <see cref="ConflictException"/> when <paramref name="condition"/> is <c>true</c>.
+    /// </summary>
+    /// <param name="condition">The condition to evaluate.</param>
+    /// <param name="errorCode">The error code with message and metadata.</param>
+    public static void ThrowIf(bool condition, ErrorCode errorCode)
+    {
+        if (condition)
+            throw new ConflictException(errorCode.Message, errorCode.Code);
+    }
 }
 

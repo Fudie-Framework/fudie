@@ -13,6 +13,34 @@ ValidationGuard.ThrowIfNot(age > 0, "Age", "Age must be positive");
 
 Throws `FluentValidation.ValidationException` with structured errors.
 
+All guards that throw `ConflictException`, `UnauthorizedException`, or `ValidationException` support an `ErrorCode` overload for structured error identification:
+
+```csharp
+var errorCode = new ErrorCode("Customer", "Slug", "AlreadyExists", "Slug already taken", ErrorCodeCategory.Guard);
+ConflictGuard.ThrowIf(slugExists, errorCode);
+
+var nameRequired = new ErrorCode("Customer", "Name", "Required", "{PropertyName} is required");
+ValidationGuard.ThrowIf(string.IsNullOrEmpty(name), nameRequired);
+```
+
+### ErrorCode
+
+```csharp
+// Category defaults to FluentValidation
+var code = new ErrorCode("Customer", "Name", "Required", "{PropertyName} is required");
+code.Code // "Customer.Name.Required"
+
+// Guard category must be explicit
+var guard = new ErrorCode("Customer", "IsActive", "AlreadyActive", "Already active", ErrorCodeCategory.Guard);
+```
+
+### ErrorCodeCategory
+
+| Value | Description |
+|-------|-------------|
+| `FluentValidation` | UX validation rules exported to Angular (default) |
+| `Guard` | Backend-only business rules |
+
 ### NotFoundGuard
 
 ```csharp
@@ -65,6 +93,8 @@ Validates using FluentValidation and throws on failure. Also checks for empty Gu
 | `UnauthorizedGuard` | Authorization guard throwing `UnauthorizedException` |
 | `ResultExtensions` | `ValueOrThrow()` / `SuccessOrThrow()` for `Result<T>` |
 | `ValidatorExtensions` | `ValidateOrThrow<T>()` for FluentValidation validators |
+| `ErrorCode` | Record identifying a validation error with `Aggregate.Property.Rule` code |
+| `ErrorCodeCategory` | Enum: `FluentValidation` (UX) or `Guard` (backend only) |
 
 ## Dependencies
 

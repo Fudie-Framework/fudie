@@ -16,4 +16,15 @@ public static class UnauthorizedGuard
         if (condition)
             throw new UnauthorizedException(message);
     }
+
+    /// <summary>
+    /// Throws a <see cref="UnauthorizedException"/> when <paramref name="condition"/> is <c>true</c>.
+    /// </summary>
+    /// <param name="condition">The condition to evaluate.</param>
+    /// <param name="errorCode">The error code with message and metadata.</param>
+    public static void ThrowIf(bool condition, ErrorCode errorCode)
+    {
+        if (condition)
+            throw new UnauthorizedException(errorCode.Message, errorCode.Code);
+    }
 }

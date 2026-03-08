@@ -57,4 +57,76 @@ public class ValidationGuardTests
         var exception = act.Should().Throw<ValidationException>().Which;
         exception.Errors.First().PropertyName.Should().BeEmpty();
     }
+
+    #region ErrorCode Overloads
+
+    [Fact]
+    public void ThrowIf_WithErrorCode_WhenConditionIsTrue_ShouldThrowWithPropertyAndMessage()
+    {
+        var errorCode = new ErrorCode("Customer", "Name", "Required", "Name is required");
+
+        var act = () => ValidationGuard.ThrowIf(true, errorCode);
+
+        var exception = act.Should().Throw<ValidationException>().Which;
+        exception.Errors.Should().ContainSingle();
+        exception.Errors.First().PropertyName.Should().Be("Name");
+        exception.Errors.First().ErrorMessage.Should().Be("Name is required");
+    }
+
+    [Fact]
+    public void ThrowIf_WithErrorCode_WhenConditionIsTrue_ShouldSetErrorCodeOnFailure()
+    {
+        var errorCode = new ErrorCode("Customer", "Name", "Required", "Name is required");
+
+        var act = () => ValidationGuard.ThrowIf(true, errorCode);
+
+        var exception = act.Should().Throw<ValidationException>().Which;
+        exception.Errors.First().ErrorCode.Should().Be("Customer.Name.Required");
+    }
+
+    [Fact]
+    public void ThrowIf_WithErrorCode_WhenConditionIsFalse_ShouldNotThrow()
+    {
+        var errorCode = new ErrorCode("Customer", "Name", "Required", "Name is required");
+
+        var act = () => ValidationGuard.ThrowIf(false, errorCode);
+
+        act.Should().NotThrow();
+    }
+
+    [Fact]
+    public void ThrowIfNot_WithErrorCode_WhenConditionIsFalse_ShouldThrowWithPropertyAndMessage()
+    {
+        var errorCode = new ErrorCode("Customer", "Email", "InvalidFormat", "Email is invalid");
+
+        var act = () => ValidationGuard.ThrowIfNot(false, errorCode);
+
+        var exception = act.Should().Throw<ValidationException>().Which;
+        exception.Errors.Should().ContainSingle();
+        exception.Errors.First().PropertyName.Should().Be("Email");
+        exception.Errors.First().ErrorMessage.Should().Be("Email is invalid");
+    }
+
+    [Fact]
+    public void ThrowIfNot_WithErrorCode_WhenConditionIsFalse_ShouldSetErrorCodeOnFailure()
+    {
+        var errorCode = new ErrorCode("Customer", "Email", "InvalidFormat", "Email is invalid");
+
+        var act = () => ValidationGuard.ThrowIfNot(false, errorCode);
+
+        var exception = act.Should().Throw<ValidationException>().Which;
+        exception.Errors.First().ErrorCode.Should().Be("Customer.Email.InvalidFormat");
+    }
+
+    [Fact]
+    public void ThrowIfNot_WithErrorCode_WhenConditionIsTrue_ShouldNotThrow()
+    {
+        var errorCode = new ErrorCode("Customer", "Email", "InvalidFormat", "Email is invalid");
+
+        var act = () => ValidationGuard.ThrowIfNot(true, errorCode);
+
+        act.Should().NotThrow();
+    }
+
+    #endregion
 }
