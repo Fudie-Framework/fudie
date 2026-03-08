@@ -21,13 +21,31 @@ RESULTS_DIR="$TEST_DIR/TestResults"
 # Clean previous results
 rm -rf "$RESULTS_DIR"
 
+# Generate runsettings dynamically
+RUNSETTINGS=$(mktemp /tmp/coverage.XXXXXX.runsettings)
+cat > "$RUNSETTINGS" << XML
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <ExcludeByAttribute>GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
+XML
+
 # Run tests with coverage
 echo "Running tests for $PROJECT..."
 dotnet test "$TEST_DIR/$PROJECT.csproj" \
-  --collect:"XPlat Code Coverage" \
+  --settings "$RUNSETTINGS" \
   --results-directory "$RESULTS_DIR" \
-  --verbosity minimal \
-  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Include="[$PACKAGE]*"
+  --verbosity minimal
+
+rm "$RUNSETTINGS"
 
 # Find the coverage file
 COVERAGE_FILE=$(find "$RESULTS_DIR" -name "coverage.cobertura.xml" | head -1)

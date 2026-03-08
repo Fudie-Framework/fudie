@@ -14,6 +14,9 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+
+    <!-- Coverlet necesita PDB portable estándar para instrumentar -->
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
