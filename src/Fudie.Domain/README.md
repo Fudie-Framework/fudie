@@ -38,6 +38,16 @@ Core domain-driven design building blocks for entity modeling, domain events, re
 | `ConflictException` | 409 Conflict |
 | `UnauthorizedException` | 401 Unauthorized |
 
+Both exceptions support an optional `ErrorCode` property for traceability:
+
+```csharp
+throw new ConflictException("Slug already taken", "Customer.Slug.AlreadyExists");
+throw new UnauthorizedException("Not the owner", "Order.Owner.NotOwner");
+
+// Legacy usage (without error code) still works
+throw new ConflictException("Slug already taken");
+```
+
 ## Dependencies
 
 None. This is a pure domain library with zero external dependencies.

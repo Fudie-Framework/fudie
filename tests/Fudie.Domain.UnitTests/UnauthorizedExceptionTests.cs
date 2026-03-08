@@ -17,12 +17,34 @@ public class UnauthorizedExceptionTests
     }
 
     [Fact]
-    public void UnauthorizedException_ShouldInheritFromException()
+    public void Constructor_WithMessage_ShouldSetErrorCodeToNull()
     {
-        // Arrange & Act
         var exception = new UnauthorizedException("test");
 
-        // Assert
+        exception.ErrorCode.Should().BeNull();
+    }
+
+    [Fact]
+    public void Constructor_WithMessageAndErrorCode_ShouldSetMessage()
+    {
+        var exception = new UnauthorizedException("Not allowed", "Order.Owner.NotOwner");
+
+        exception.Message.Should().Be("Not allowed");
+    }
+
+    [Fact]
+    public void Constructor_WithMessageAndErrorCode_ShouldSetErrorCode()
+    {
+        var exception = new UnauthorizedException("Not allowed", "Order.Owner.NotOwner");
+
+        exception.ErrorCode.Should().Be("Order.Owner.NotOwner");
+    }
+
+    [Fact]
+    public void UnauthorizedException_ShouldInheritFromException()
+    {
+        var exception = new UnauthorizedException("test");
+
         exception.Should().BeAssignableTo<Exception>();
     }
 }
